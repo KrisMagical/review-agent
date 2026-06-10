@@ -266,8 +266,10 @@ class ModelProviderTester:
 def settings_from_env(settings: ModelProviderSettings) -> ModelProviderSettings:
     provider = os.getenv("REVIEWAGENT_LLM_PROVIDER")
     if provider:
-        settings.provider = _provider(provider)
-        settings.enabled = settings.provider not in {"none"}
+        env_provider = _provider(provider)
+        if env_provider != "none" or settings.provider == "none":
+            settings.provider = env_provider
+            settings.enabled = settings.provider not in {"none"}
     settings.model = os.getenv("REVIEWAGENT_LLM_MODEL") or settings.model
     settings.base_url = (
         os.getenv("REVIEWAGENT_OPENAI_COMPATIBLE_BASE_URL")

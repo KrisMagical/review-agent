@@ -16,6 +16,7 @@ def test_required_project_docs_exist_and_are_non_empty() -> None:
         "docs/model_providers.md",
         "docs/self_hosting.md",
         "docs/privacy.md",
+        "docs/public_beta.md",
         "docs/github_app.md",
         "docs/mcp.md",
         "docs/dashboard.md",
