@@ -1,27 +1,145 @@
-# Phase 9 Dashboard
+# Dashboard
 
-Phase 9 adds a local governance dashboard for ReviewAgent review history, issue trends, risk statistics, and team review summaries.
+The Dashboard is ReviewAgent's local governance UI for review history, issue trends, model settings, hosted review, and connected-service audit.
 
-The Dashboard does not replace CLI, MCP, or GitHub App workflows. It stores optional review results and reads them from SQLite.
+## Dashboard Overview
 
-## What It Shows
+The Dashboard stores optional review results in SQLite and shows:
 
-- Projects
-- Review runs
-- Stored issues
-- Severity overview
-- Bug trends
-- Technical debt trends
-- Architecture risk trends
-- Team review statistics
-- Risky files
+- projects
+- review runs
+- issue details
+- severity summaries
+- issue trends
+- bug trends
+- technical debt trends
+- architecture risk trends
+- team statistics
+- network audit records
+
+It does not replace CLI, MCP, or GitHub App workflows.
+
+## Start Dashboard
+
+```bash
+review dashboard init-db
+review dashboard serve --host 127.0.0.1 --port 8080
+```
+
+Other entry points:
+
+```bash
+reviewagent-dashboard
+python -m reviewagent.dashboard.app
+```
+
+Docker:
+
+```bash
+docker compose up dashboard
+```
+
+## Auth
+
+Auth is disabled by default for local development. Enable before server/public access:
+
+```bash
+REVIEWAGENT_AUTH_ENABLED=true
+REVIEWAGENT_ADMIN_USERNAME=admin
+REVIEWAGENT_ADMIN_PASSWORD=...
+REVIEWAGENT_SESSION_SECRET=...
+REVIEWAGENT_API_KEYS=...
+```
+
+When enabled:
+
+- pages redirect to `/login`
+- `/logout` clears the session
+- APIs accept session or Bearer token
+- optional Basic Auth is available
+- `/health` remains public
+
+## Projects
+
+Projects are created when saved review results include project metadata. The project pages show review history and high-level risk information.
+
+## Review Runs
+
+Review runs store:
+
+- source: `cli`, `github`, `dashboard`, `mcp`, or `api`
+- target type: `file`, `diff`, `project`, or `pull_request`
+- target ref
+- severity counts
+- sanitized metadata
+- issue records
+
+## Issue Trends
+
+Trend endpoints group stored issues by day and severity. The Dashboard also derives bug, technical debt, and architecture-risk trends from issue type/category.
+
+## Network Audit
+
+Routes:
+
+- `/audit/network`
+- `GET /api/audit/network`
+- `GET /api/audit/network/{id}`
+
+Audit data does not include API keys, tokens, full prompts, or full source code.
+
+## Model Settings
+
+Open:
+
+```text
+/settings/models
+```
+
+Configure provider, model, masked API key, NetworkPolicy, and code sharing mode. Real providers remain blocked unless explicitly authorized.
+
+## Hosted Review Web UI
+
+Open:
+
+```text
+/review
+```
+
+Pages:
+
+- `/review/diff`
+- `/review/project`
+- `/review/github-pr`
+
+Hosted project review is restricted by `REVIEWAGENT_ALLOWED_REVIEW_ROOTS`.
+
+## GitHub PR full_project Metadata
+
+When GitHub `full_project` mode is used and results are saved, metadata may include:
+
+- review mode
+- owner/repo
+- PR number
+- base/head sha
+- fetched/skipped file counts
+- enable agents/LLM flags
+- code sharing mode
+
+It does not store token, source files, full diff, private keys, or full prompt.
 
 ## SQLite Storage
 
-Default path:
+Default:
 
 ```text
 .reviewagent/reviewagent.db
+```
+
+Docker:
+
+```text
+/data/reviewagent.db
 ```
 
 Override:
@@ -30,50 +148,19 @@ Override:
 REVIEWAGENT_DB_PATH=/path/to/reviewagent.db
 ```
 
-Initialize:
+## Docker Deployment
 
 ```bash
-review dashboard init-db
+docker compose up dashboard
 ```
 
-## Save CLI Results
+Open:
 
-Saving is opt-in:
-
-```bash
-review project . --save
-review project examples/multi_agent_project --agents --save --format json
-review file app/main.py --save
-review diff --file changes.patch --save
+```text
+http://127.0.0.1:8080
 ```
 
-Without `--save`, CLI behavior is unchanged and no database write occurs.
-
-## Save GitHub PR Results
-
-Enable:
-
-```bash
-REVIEWAGENT_GITHUB_SAVE_RESULTS=true
-```
-
-GitHub App saves issue summaries and sanitized metadata. It does not save tokens, private keys, or full diff text.
-
-## Start Dashboard
-
-```bash
-review dashboard serve --host 127.0.0.1 --port 8080
-python -m reviewagent.dashboard.app
-reviewagent-dashboard
-```
-
-Environment:
-
-```bash
-REVIEWAGENT_DASHBOARD_HOST=127.0.0.1
-REVIEWAGENT_DASHBOARD_PORT=8080
-REVIEWAGENT_DB_PATH=.reviewagent/reviewagent.db
-```
+Compose mounts `.reviewagent` for database persistence and `/workspace` for hosted project review.
 
 ## API Routes
 
@@ -92,25 +179,42 @@ REVIEWAGENT_DB_PATH=.reviewagent/reviewagent.db
 - `GET /api/stats/team`
 - `GET /api/audit/network`
 - `GET /api/audit/network/{id}`
+- `GET /api/settings/models`
+- `POST /api/settings/models`
+- `POST /api/settings/models/test`
+- `DELETE /api/settings/models/api-key`
+- `GET /api/review/options`
+- `POST /api/review/diff`
+- `POST /api/review/project`
+- `POST /api/review/github-pr`
 
 ## Pages
 
-- `/` or `/dashboard`: overview
-- `/projects`: project list
-- `/projects/{id}`: project detail
-- `/reviews/{id}`: review detail
-- `/audit/network`: connected-service audit events
+- `/` or `/dashboard`
+- `/login`
+- `/logout`
+- `/projects`
+- `/projects/{id}`
+- `/reviews/{id}`
+- `/audit/network`
+- `/settings/models`
+- `/review`
+- `/review/diff`
+- `/review/project`
+- `/review/github-pr`
 
-## Security
+## Security Notes
 
-The Dashboard defaults to `127.0.0.1` and is intended for local or controlled internal use. It has no authentication in Phase 9 and should not be exposed directly to the public internet.
-
-The Dashboard does not execute project code, modify source files, expose environment variables, or display GitHub tokens/private keys.
+- Default host is local development oriented.
+- Enable auth and HTTPS before server/public access.
+- Do not expose unauthenticated Dashboard publicly.
+- Dashboard does not execute reviewed code.
+- API key output is masked.
+- Uploaded diffs are not stored in metadata.
 
 ## Current Limits
 
-- No RBAC or multi-tenant auth.
-- No distributed queue.
-- No advanced charts or frontend framework.
-- No long-term SaaS deployment tooling.
-- V1.0+ can add auth, team dashboards, richer trend visualizations, and deployment hardening.
+- No RBAC or multi-user workspace.
+- No background queue; hosted reviews run synchronously.
+- No advanced frontend framework.
+- No SaaS tenant isolation.

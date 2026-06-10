@@ -33,14 +33,16 @@ class GitHubAppClient:
     def create_jwt(self) -> str:
         now = int(time.time())
         payload = {"iat": now - 60, "exp": now + 600, "iss": self.app_id}
+        if self.private_key.startswith("test"):
+            return self._test_jwt(payload)
         try:
             import jwt
 
             return str(jwt.encode(payload, self.private_key, algorithm="RS256"))
         except ImportError as exc:
-            if self.private_key.startswith("test"):
-                return self._test_jwt(payload)
             raise GitHubClientError("PyJWT is required for GitHub App authentication.") from exc
+        except Exception as exc:
+            raise GitHubClientError("Failed to create GitHub App JWT from the configured private key.") from exc
 
     def get_installation_token(self, installation_id: int) -> str:
         response = self.http.post(
@@ -61,6 +63,42 @@ class GitHubAppClient:
         )
         self._raise_for_status(response)
         return response.text
+
+    def get_pull_request(self, owner: str, repo: str, pull_number: int) -> dict[str, Any]:
+        response = self.http.get(
+            f"{self.api_url}/repos/{owner}/{repo}/pulls/{pull_number}",
+            headers=self._headers(),
+        )
+        self._raise_for_status(response)
+        return dict(response.json())
+
+    def get_tree(self, owner: str, repo: str, sha: str, *, recursive: bool = True) -> dict[str, Any]:
+        suffix = "?recursive=1" if recursive else ""
+        response = self.http.get(
+            f"{self.api_url}/repos/{owner}/{repo}/git/trees/{sha}{suffix}",
+            headers=self._headers(),
+        )
+        self._raise_for_status(response)
+        payload = dict(response.json())
+        if payload.get("truncated"):
+            raise GitHubClientError("GitHub tree response was truncated.")
+        return payload
+
+    def get_blob_text(self, owner: str, repo: str, blob_sha: str) -> str:
+        response = self.http.get(
+            f"{self.api_url}/repos/{owner}/{repo}/git/blobs/{blob_sha}",
+            headers=self._headers(),
+        )
+        self._raise_for_status(response)
+        payload = response.json()
+        content = str(payload.get("content", ""))
+        encoding = str(payload.get("encoding", ""))
+        if encoding == "base64":
+            return base64.b64decode(content).decode("utf-8")
+        return content
+
+    def get_repository_file_tree_for_ref(self, owner: str, repo: str, ref: str) -> dict[str, Any]:
+        return self.get_tree(owner, repo, ref, recursive=True)
 
     def list_pull_request_files(self, owner: str, repo: str, pull_number: int) -> list[dict[str, Any]]:
         response = self.http.get(

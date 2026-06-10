@@ -1,0 +1,27 @@
+name: Docker
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t reviewagent:test .
+
+      - name: Smoke test CLI in Docker
+        run: |
+          docker run --rm reviewagent:test review --help
+          docker run --rm reviewagent:test review --version
+          docker run --rm reviewagent:test python -m reviewagent.cli.main --help
+          docker run --rm reviewagent:test review file examples/bad_code.py --format json
+
+      - name: Validate Compose config
+        run: docker compose config

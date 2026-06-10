@@ -1,24 +1,42 @@
-# ReviewAgent MCP Server
+# MCP Server
 
-ReviewAgent exposes its static review engine through an MCP stdio server.
+ReviewAgent exposes local review tools through an MCP stdio server.
 
-## Install dependencies
+## MCP stdio Server
+
+Start:
 
 ```bash
-pip install -r app/requirements.txt
+reviewagent-mcp
 ```
 
-The Phase 3 MCP server requires `mcp`. Phase 2 analyzers use `ruff`, `radon`, and `networkx`.
-
-## Start the server
+Alternative:
 
 ```bash
 python -m reviewagent.mcp_server.server
 ```
 
-The server speaks MCP over stdio. It does not start an HTTP server.
+MCP uses stdio. It does not start an HTTP server.
 
-## Claude Desktop
+## Local Usage
+
+Use MCP when you want an AI coding tool to call ReviewAgent locally against files, diffs, or projects.
+
+ReviewAgent remains offline by default. Optional LLM/network behavior requires explicit arguments.
+
+## Cursor Config
+
+```json
+{
+  "mcpServers": {
+    "reviewagent": {
+      "command": "reviewagent-mcp"
+    }
+  }
+}
+```
+
+Source checkout alternative:
 
 ```json
 {
@@ -26,36 +44,30 @@ The server speaks MCP over stdio. It does not start an HTTP server.
     "reviewagent": {
       "command": "python",
       "args": ["-m", "reviewagent.mcp_server.server"],
-      "cwd": "/path/to/ReviewAgent"
+      "cwd": "/path/to/review-agent"
     }
   }
 }
 ```
 
-## Cursor
-
-Use the same stdio command in Cursor's MCP configuration:
+## Claude Desktop Config
 
 ```json
 {
   "mcpServers": {
     "reviewagent": {
-      "command": "python",
-      "args": ["-m", "reviewagent.mcp_server.server"],
-      "cwd": "/path/to/ReviewAgent"
+      "command": "reviewagent-mcp"
     }
   }
 }
 ```
 
-## Tools
-
-### review_file
+## review_file
 
 Input:
 
 ```json
-{"path": "examples/mcp/sample_file.py"}
+{"path": "examples/bad_code.py"}
 ```
 
 Output:
@@ -64,7 +76,7 @@ Output:
 {"issues": []}
 ```
 
-### review_diff
+## review_diff
 
 Input:
 
@@ -78,12 +90,12 @@ Output:
 {"issues": []}
 ```
 
-### review_project
+## review_project
 
 Input:
 
 ```json
-{"path": "examples/phase2_bad_project", "enable_llm": false}
+{"path": "examples/phase2_bad_project"}
 ```
 
 Output:
@@ -92,7 +104,9 @@ Output:
 {"issues": []}
 ```
 
-Enable optional LLM architecture review:
+## enable_llm
+
+Mock provider stays offline:
 
 ```json
 {
@@ -102,46 +116,7 @@ Enable optional LLM architecture review:
 }
 ```
 
-Enable enterprise rules with an explicit config:
-
-```json
-{
-  "path": "examples/enterprise_policy_project",
-  "config_path": "examples/enterprise_policy_project/reviewagent.yml",
-  "enable_enterprise_rules": true
-}
-```
-
-Disable enterprise rules:
-
-```json
-{
-  "path": "examples/enterprise_policy_project",
-  "enable_enterprise_rules": false
-}
-```
-
-Enable Phase 6 multi-agent review:
-
-```json
-{
-  "path": "examples/multi_agent_project",
-  "enable_agents": true,
-  "config_path": "examples/multi_agent_project/reviewagent.yml"
-}
-```
-
-Run only selected agents:
-
-```json
-{
-  "path": "examples/multi_agent_project",
-  "enable_agents": true,
-  "agents": ["quality", "security"]
-}
-```
-
-Enable a real LLM provider with explicit network policy:
+Real provider with explicit policy:
 
 ```json
 {
@@ -157,13 +132,71 @@ Enable a real LLM provider with explicit network policy:
 }
 ```
 
+## enable_agents
+
+```json
+{
+  "path": "examples/multi_agent_project",
+  "enable_agents": true
+}
+```
+
+Selected agents:
+
+```json
+{
+  "path": "examples/multi_agent_project",
+  "enable_agents": true,
+  "agents": ["quality", "security"]
+}
+```
+
+## Enterprise Config
+
+```json
+{
+  "path": "examples/enterprise_policy_project",
+  "config_path": "examples/enterprise_policy_project/reviewagent.yml",
+  "enable_enterprise_rules": true
+}
+```
+
+Disable:
+
+```json
+{"path": ".", "enable_enterprise_rules": false}
+```
+
+## network_policy
+
+Accepted fields include:
+
+- `enabled`
+- `allow_llm`
+- `allow_github_api`
+- `allow_remote_mcp`
+- `code_sharing_mode`
+- `allowed_providers`
+- `audit_enabled`
+
+Without `network_policy`, MCP remains offline.
+
+## Offline Default
+
+MCP does not call real LLM providers by default. It never modifies reviewed source files.
+
+## Docker MCP Note
+
+```bash
+docker run --rm -i reviewagent reviewagent-mcp
+```
+
+Docker MCP is suitable for advanced local integrations where stdio can be connected to the tool.
+
 ## Troubleshooting
 
-- If `mcp` is missing, install dependencies from `app/requirements.txt`.
-- If Ruff, Radon, or networkx are unavailable, ReviewAgent degrades gracefully and still returns JSON.
-- The server only performs static analysis. It does not import, execute, modify, or delete reviewed project code.
-- Very large files, diffs, or projects return a review error issue instead of crashing the MCP server.
-- LLM architecture review is disabled by default. When enabled, ReviewAgent sends a bounded project summary to the configured provider.
-- Enterprise rules are enabled by default for `review_project`; when no config is found, behavior is unchanged.
-- Multi-agent review is disabled by default and runs synchronously when `enable_agents` is true.
-- MCP remains offline by default. Real LLM providers require `network_policy`.
+- Missing dependency: install `pip install -e ".[mcp]"` or `".[all]"`.
+- Large projects: ReviewAgent returns safe issue JSON instead of crashing.
+- Real LLM blocked: provide `network_policy`.
+- MCP is not HTTP; configure tools for stdio.
+- Remote/hosted MCP is a future or advanced deployment pattern.

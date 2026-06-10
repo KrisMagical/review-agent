@@ -18,10 +18,16 @@ def format_summary_comment(result: dict[str, Any], *, errors: list[str] | None =
     normalized = normalize_result(result)
     summary = normalized["summary"]
     top_issues = normalized["issues"][:10]
+    metadata = result.get("metadata", {}) if isinstance(result.get("metadata", {}), dict) else {}
+    review_mode = metadata.get("review_mode")
     lines = [
         SUMMARY_MARKER,
         "## ReviewAgent Report",
         "",
+    ]
+    if review_mode:
+        lines.extend([f"Review mode: `{review_mode}`", ""])
+    lines.extend([
         "Summary:",
         f"- Critical: {summary['critical']}",
         f"- High: {summary['high']}",
@@ -29,7 +35,7 @@ def format_summary_comment(result: dict[str, Any], *, errors: list[str] | None =
         f"- Low: {summary['low']}",
         "",
         "Top Issues:",
-    ]
+    ])
     if top_issues:
         for index, issue in enumerate(top_issues, start=1):
             lines.append(f"{index}. [{str(issue['severity']).upper()}] {issue['type']} - {issue['file']}:{issue['line']}")

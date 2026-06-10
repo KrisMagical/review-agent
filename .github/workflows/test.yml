@@ -1,0 +1,46 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
+
+    env:
+      REVIEWAGENT_LLM_PROVIDER: none
+      REVIEWAGENT_NETWORK_ENABLED: "false"
+      REVIEWAGENT_ALLOW_LLM: "false"
+      REVIEWAGENT_CODE_SHARING_MODE: none
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[all,dev]"
+
+      - name: Run tests
+        run: pytest --basetemp=.pytest_tmp
+
+      - name: Smoke test CLI
+        run: |
+          review --help
+          review --version
+          review file examples/bad_code.py --format json
+          review project examples/multi_agent_project --agents --format json
+          python -m reviewagent.cli.main --help

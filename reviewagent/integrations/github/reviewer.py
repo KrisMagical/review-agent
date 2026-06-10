@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 from typing import Any
-from pathlib import Path
-from tempfile import TemporaryDirectory
 
 from app.report.cli_formatters import has_fail_on_issue
 from app.reviewer import ReviewService
@@ -15,6 +13,7 @@ from reviewagent.integrations.github.commenter import GitHubCommenter
 from reviewagent.integrations.github.config import GitHubAppConfig
 from reviewagent.integrations.github.formatter import format_summary_comment
 from reviewagent.integrations.github.models import GitHubReviewResult, PullRequestEvent
+from reviewagent.integrations.github.repository_fetcher import GitHubRepositoryFetcher
 
 
 class GitHubPullRequestReviewer:
@@ -32,22 +31,27 @@ class GitHubPullRequestReviewer:
         self.review_service = review_service or ReviewService()
         self.commenter = commenter or GitHubCommenter(client, max_inline_comments=config.max_inline_comments)
         self.persistence_service = persistence_service
+        self.last_metadata: dict[str, Any] = {}
 
     def review_pull_request(self, event: PullRequestEvent) -> GitHubReviewResult:
         errors: list[str] = []
+        self.last_metadata = {}
         try:
             self.client.get_installation_token(event.installation_id)
             diff_text = self.client.get_pull_request_diff(event.owner, event.repo, event.pull_number)
         except Exception as exc:
             return GitHubReviewResult(status="failed", errors=[f"GitHub API error: {exc}"])
         try:
-            if self.config.review_mode == "full_project":
+            mode = self.config.review_mode if self.config.review_mode in {"diff_only", "full_project"} else "diff_only"
+            if mode == "full_project":
                 result = self._review_full_project(event)
             else:
                 result = self.review_service.review_diff(diff_text)
         except Exception as exc:
             result = {"issues": []}
             errors.append(f"ReviewService failed: {exc}")
+        result.setdefault("metadata", {})
+        result["metadata"].update({"review_mode": mode, **self.last_metadata})
         if self.config.save_results:
             try:
                 persistence = self.persistence_service or ReviewPersistenceService()
@@ -60,7 +64,14 @@ class GitHubPullRequestReviewer:
                     repository_url=f"https://github.com/{event.repository_full_name}",
                     commit_sha=event.head_sha,
                     pull_request_number=event.pull_number,
-                    metadata=event.metadata,
+                    metadata={
+                        **event.metadata,
+                        **self.last_metadata,
+                        "review_mode": mode,
+                        "enable_agents": self.config.enable_agents,
+                        "enable_llm": self.config.enable_llm,
+                        "code_sharing_mode": self.config.code_sharing_mode,
+                    },
                 )
             except Exception as exc:
                 errors.append(f"Dashboard persistence failed: {exc}")
@@ -93,34 +104,43 @@ class GitHubPullRequestReviewer:
         return GitHubPullRequestReviewer(client=client, config=config)
 
     def _review_full_project(self, event: PullRequestEvent) -> dict[str, Any]:
-        with TemporaryDirectory(prefix="reviewagent-pr-") as temp_dir:
-            root = Path(temp_dir)
-            for item in self.client.list_pull_request_files(event.owner, event.repo, event.pull_number):
-                filename = str(item.get("filename", ""))
-                if not filename.endswith(".py"):
-                    continue
-                content = item.get("content")
-                if content is None and item.get("raw_url"):
-                    content = self.client.get_url_text(str(item["raw_url"]))
-                if content is None and item.get("patch"):
-                    content = self._content_from_patch(str(item["patch"]))
-                if content is None:
-                    continue
-                target = root / filename
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(str(content), encoding="utf-8")
-            return self.review_service.review_project(
-                str(root),
+        fetcher = GitHubRepositoryFetcher(self.client, self.config)
+        try:
+            workspace = fetcher.fetch_pull_request_project(event.owner, event.repo, event.head_sha)
+        except Exception as exc:
+            self.last_metadata = {"review_mode": "full_project", "fetch_error": type(exc).__name__}
+            return {
+                "issues": [
+                    {
+                        "severity": "low",
+                        "type": "GitHubProjectFetchError",
+                        "file": "",
+                        "line": 1,
+                        "message": "Failed to fetch GitHub project files for full_project review.",
+                        "suggestion": "Check GitHub permissions, repository size, and review mode configuration.",
+                    }
+                ]
+            }
+        try:
+            self.last_metadata = {"review_mode": "full_project", **workspace.metadata}
+            result = self.review_service.review_project(
+                str(workspace.root),
                 enable_llm=self.config.enable_llm,
                 config_path=self.config.config_path,
+                enable_enterprise_rules=True,
                 enable_agents=self.config.enable_agents,
                 network_policy=NetworkPolicy(
-                    enabled=False,
-                    allow_llm=False,
+                    enabled=self.config.allow_network,
+                    allow_llm=self.config.allow_llm,
                     allow_github_api=True,
-                    code_sharing_mode="none",
+                    code_sharing_mode=self.config.code_sharing_mode if self.config.code_sharing_mode in {"none", "summary_only", "snippets", "full_context"} else "none",  # type: ignore[arg-type]
                 ),
             )
+            result.setdefault("issues", [])
+            result["issues"].extend(issue.to_dict() for issue in workspace.issues)
+            return result
+        finally:
+            workspace.cleanup()
 
     @staticmethod
     def _content_from_patch(patch: str) -> str:

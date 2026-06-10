@@ -1,21 +1,97 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "reviewagent"
-version = "0.7.0"
-description = "Agent-native software review platform"
+version = "0.1.0"
+description = "Local-first, agent-native code review platform with CLI, MCP, GitHub App, enterprise rules, optional LLM review, and dashboard."
+readme = "README.md"
 requires-python = ">=3.12"
-dependencies = [
-    "fastapi",
-    "httpx",
-    "jinja2",
+license = { file = "LICENSE" }
+authors = [
+    { name = "KrisMagical" },
+]
+maintainers = [
+    { name = "KrisMagical" },
+]
+keywords = [
+    "code-review",
+    "static-analysis",
     "mcp",
+    "github-app",
+    "llm",
+    "developer-tools",
+    "quality-assurance",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = [
     "networkx",
     "pydantic",
-    "PyJWT",
     "pyyaml",
     "radon",
     "ruff",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "pytest",
+    "ruff",
+    "setuptools>=68",
+    "twine",
+    "wheel",
+]
+dashboard = [
+    "fastapi",
+    "itsdangerous",
+    "jinja2",
+    "python-multipart",
     "uvicorn",
 ]
+github = [
+    "fastapi",
+    "httpx",
+    "PyJWT",
+    "uvicorn",
+]
+llm = [
+    "httpx",
+    "openai",
+]
+mcp = [
+    "mcp",
+]
+all = [
+    "fastapi",
+    "httpx",
+    "itsdangerous",
+    "jinja2",
+    "mcp",
+    "openai",
+    "PyJWT",
+    "python-multipart",
+    "uvicorn",
+]
+
+[project.urls]
+Homepage = "https://github.com/KrisMagical/review-agent"
+Repository = "https://github.com/KrisMagical/review-agent"
+Issues = "https://github.com/KrisMagical/review-agent/issues"
+Documentation = "https://github.com/KrisMagical/review-agent/tree/main/docs"
+Changelog = "https://github.com/KrisMagical/review-agent/blob/main/CHANGELOG.md"
 
 [project.scripts]
 review = "reviewagent.cli.main:main"
@@ -23,6 +99,14 @@ reviewagent = "reviewagent.cli.main:main"
 reviewagent-mcp = "reviewagent.mcp_server.server:main"
 reviewagent-github-app = "reviewagent.integrations.github.app:main"
 reviewagent-dashboard = "reviewagent.dashboard.app:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*", "mcp_server*", "reviewagent*"]
+
+[tool.setuptools.package-data]
+"app.llm" = ["prompts/*.md"]
+"reviewagent.dashboard" = ["templates/*.html", "templates/review/*.html", "static/*.css"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

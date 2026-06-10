@@ -98,7 +98,7 @@ def test_dashboard_api_functions_and_not_found(tmp_path: Path, monkeypatch: pyte
     service = ReviewPersistenceService(db_path)
     review_id = service.save_review_result(result_payload(), source="cli", target_type="project", target_ref=".", project_name="demo")
 
-    assert dashboard_app_module.health() == {"status": "ok"}
+    assert dashboard_app_module.health() == {"status": "ok", "service": "dashboard"}
     assert dashboard_app_module.api_projects()
     assert dashboard_app_module.api_reviews()
     assert dashboard_app_module.api_review(review_id)["id"] == review_id

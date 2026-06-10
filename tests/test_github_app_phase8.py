@@ -1,10 +1,8 @@
 import asyncio
 import json
-from dataclasses import asdict
 
 import httpx
 
-from app.reviewer import ReviewService
 from reviewagent.integrations.github.app import app, health
 from reviewagent.integrations.github.client import GitHubAppClient
 from reviewagent.integrations.github.commenter import GitHubCommenter
@@ -256,5 +254,5 @@ def test_pull_request_reviewer_handles_github_api_failure() -> None:
 
 
 def test_health_function_returns_ok() -> None:
-    assert asyncio.run(health()) == {"status": "ok"}
+    assert asyncio.run(health()) == {"status": "ok", "service": "github-app"}
     assert app is not None

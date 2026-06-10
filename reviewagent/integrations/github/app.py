@@ -47,7 +47,7 @@ app = FastAPI(title="ReviewAgent GitHub App")
 
 @app.get("/health")
 async def health() -> dict[str, str]:
-    return {"status": "ok"}
+    return {"status": "ok", "service": "github-app"}
 
 
 @app.post("/webhook")

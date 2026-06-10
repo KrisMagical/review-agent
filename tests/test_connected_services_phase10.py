@@ -139,6 +139,13 @@ class FakeGitHubClient:
         self.files_called = True
         return [{"filename": "app.py", "content": "def run():\n    return 1\n"}]
 
+    def get_repository_file_tree_for_ref(self, owner: str, repo: str, ref: str):
+        self.files_called = True
+        return {"tree": [{"path": "app.py", "type": "blob", "sha": "blob", "size": 25}], "truncated": False}
+
+    def get_blob_text(self, owner: str, repo: str, blob_sha: str) -> str:
+        return "def run():\n    return 1\n"
+
 
 class FakeCommenter:
     def publish(self, event, result, diff_text, *, summary=True, inline=True, errors=None):

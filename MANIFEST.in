@@ -1,0 +1,14 @@
+include README.md
+include LICENSE
+include CHANGELOG.md
+include pyproject.toml
+include Dockerfile
+include docker-compose.yml
+include .env.example
+recursive-include docker *
+recursive-include docs *
+recursive-include examples *
+recursive-include app/llm/prompts *.md
+recursive-include reviewagent/dashboard/templates *.html
+recursive-include reviewagent/dashboard/static *.css
+global-exclude __pycache__ *.py[cod] .DS_Store

@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    env:
+      REVIEWAGENT_LLM_PROVIDER: none
+      REVIEWAGENT_NETWORK_ENABLED: "false"
+      REVIEWAGENT_ALLOW_LLM: "false"
+      REVIEWAGENT_CODE_SHARING_MODE: none
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[all,dev]"
+
+      - name: Run tests
+        run: pytest --basetemp=.pytest_tmp
+
+      - name: Smoke test CLI
+        run: |
+          review --help
+          review --version
+          python -m reviewagent.cli.main --help
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Check distributions
+        run: twine check dist/*
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+
+      # Optional PyPI publishing can be added later with Trusted Publishing or
+      # a PYPI_API_TOKEN secret. It is intentionally not enabled by default.

@@ -1,20 +1,23 @@
 # Connected Services
 
-ReviewAgent is local-first and offline by default.
+ReviewAgent is local-first and offline by default. Connected Services are opt-in integrations that may call external systems such as LLM providers or GitHub APIs.
 
-By default, ReviewAgent does not:
+## Connected Services Overview
 
-- call real LLM providers
-- upload code
-- call remote MCP services
-- send project summaries outside the machine
-- enable LLM architecture review with a network provider
+Potential networked operations:
 
-Connected services require explicit opt-in.
+- real LLM architecture review
+- Dashboard provider connection tests
+- GitHub App PR review
+- Hosted Review GitHub PR URL review
+- GitHub `full_project` file fetch
+- future remote MCP deployments
+
+Mock LLM, local CLI review, enterprise rules, and Dashboard browsing of stored SQLite data remain offline.
 
 ## NetworkPolicy
 
-ReviewAgent uses a `NetworkPolicy` gate:
+NetworkPolicy gates connected operations:
 
 ```json
 {
@@ -29,70 +32,89 @@ ReviewAgent uses a `NetworkPolicy` gate:
 }
 ```
 
-`code_sharing_mode` values:
+## LLM Provider Rules
 
-- `none`: no code or project summary may be sent
-- `summary_only`: bounded architecture/project summary only
-- `snippets`: selected snippets may be sent
-- `full_context`: broad context may be sent
+Real LLM providers require:
 
-## CLI
+- `enabled=true`
+- `allow_llm=true`
+- approved provider
+- `code_sharing_mode` not `none`
 
-Mock LLM stays offline:
+CLI:
 
 ```bash
 review project . --llm --llm-provider mock
-```
-
-Real providers require explicit authorization:
-
-```bash
 review project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
-review project . --llm --llm-provider anthropic --allow-network --allow-llm --code-sharing summary-only
 ```
 
 `--llm` alone is not network consent.
 
-## Providers
+## GitHub Networking
 
-Implemented provider center:
+GitHub App and Hosted Review GitHub PR mode call GitHub APIs only when configured.
 
-- `none`
-- `mock`
-- `openai`
-- `anthropic`
-- `azure_openai`, placeholder
-
-Environment variables:
-
-```bash
-OPENAI_API_KEY=...
-ANTHROPIC_API_KEY=...
-REVIEWAGENT_LLM_MODEL=...
-REVIEWAGENT_ANTHROPIC_MODEL=...
-```
-
-Provider errors become normal ReviewAgent issues, not tracebacks.
-
-## GitHub App
-
-GitHub App necessarily calls GitHub APIs for webhook PR review. Its PR review mode is:
+GitHub App review mode:
 
 ```bash
 REVIEWAGENT_GITHUB_REVIEW_MODE=diff_only
-```
-
-Optional:
-
-```bash
 REVIEWAGENT_GITHUB_REVIEW_MODE=full_project
 ```
 
-`full_project` builds a temporary changed-files project context from PR files and calls `ReviewService.review_project`. It does not execute PR code and cleans the temporary directory.
+- `diff_only`: fetches the PR diff and reviews changed lines.
+- `full_project`: fetches Python/config/limited metadata files for the PR head commit through Trees/Blob APIs, builds a temporary directory, and runs project review.
 
-## MCP
+`full_project` is not a full repository mirror and skips secret-like files.
 
-MCP `review_project` accepts:
+## MCP Networking
+
+Current MCP is local stdio:
+
+```bash
+reviewagent-mcp
+```
+
+`review_project` can accept a `network_policy` for optional LLM review. Without it, MCP remains offline.
+
+## Dashboard Network Audit
+
+Audit routes:
+
+- `GET /api/audit/network`
+- `GET /api/audit/network/{id}`
+- `/audit/network`
+
+Audit records include provider, operation, source, sharing mode, status, and sanitized metadata.
+
+They do not include:
+
+- API keys
+- tokens
+- private keys
+- full prompts
+- full source code
+
+## allow_network / allow_llm
+
+Use both for real LLM providers:
+
+- `allow_network`: permits network operations under the selected policy
+- `allow_llm`: permits LLM provider calls
+
+For GitHub PR URL review, GitHub fetches require network permission. LLM remains separately controlled.
+
+## code_sharing_mode
+
+- `none`: no code or summaries
+- `summary_only`: bounded project and issue summaries
+- `snippets`: selected snippets may be sent
+- `full_context`: broader source context may be sent
+
+Use `summary_only` for external providers unless a broader mode is formally approved.
+
+## Examples
+
+MCP:
 
 ```json
 {
@@ -108,41 +130,17 @@ MCP `review_project` accepts:
 }
 ```
 
-Without `network_policy`, MCP remains offline.
+GitHub full project:
 
-## Network Audit
+```bash
+REVIEWAGENT_GITHUB_REVIEW_MODE=full_project
+REVIEWAGENT_GITHUB_ENABLE_AGENTS=true
+REVIEWAGENT_GITHUB_ENABLE_LLM=false
+```
 
-ReviewAgent records connected-service audit metadata when audit is enabled:
+## Current Limits
 
-- source
-- provider
-- operation
-- code sharing mode
-- status
-- error type
-- target/project identifiers
-
-It does not store:
-
-- API keys
-- tokens
-- private keys
-- full prompts
-- full source code
-
-Dashboard routes:
-
-- `GET /api/audit/network`
-- `GET /api/audit/network/{id}`
-- `/audit/network`
-
-## Enterprise Deployment
-
-Recommended enterprise defaults:
-
-- keep `NetworkPolicy.enabled=false` by default
-- allow only approved providers
-- use `summary_only` unless snippets are formally approved
-- route LLM traffic through a private gateway if needed
-- keep Dashboard behind VPN/internal auth
-- review audit logs regularly
+- No remote MCP hosting workflow is provided by default.
+- No SaaS control plane.
+- LLM usage accounting is limited to local audit records.
+- `full_context` depends on provider limits and should be avoided for sensitive repositories.

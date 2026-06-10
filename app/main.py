@@ -57,6 +57,7 @@ from app.rules import RuffLintRule
 from app.rules.architecture import GodObjectDetector
 from app.rules.base import Issue
 from app.rules.engine import RuleEngine
+from reviewagent import __version__
 from reviewagent.storage import ReviewPersistenceService, init_db
 from reviewagent.connected import NetworkPolicy
 
@@ -326,7 +327,7 @@ def build_cli_parser() -> argparse.ArgumentParser:
         prog="review",
         description="ReviewAgent local CLI for file, diff, project, enterprise, LLM, and multi-agent reviews.",
     )
-    parser.add_argument("--version", action="version", version="ReviewAgent 0.7.0")
+    parser.add_argument("--version", action="version", version=f"ReviewAgent {__version__}")
     parser.add_argument("--debug", action="store_true", help="Print detailed CLI errors to stderr.")
     subparsers = parser.add_subparsers(dest="command")
 

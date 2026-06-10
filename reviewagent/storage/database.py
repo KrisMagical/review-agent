@@ -105,5 +105,28 @@ def init_db(db_path: str | Path | None = None) -> None:
                 error_type TEXT,
                 metadata_json TEXT NOT NULL DEFAULT '{}'
             );
+
+            CREATE TABLE IF NOT EXISTS model_provider_settings (
+                id INTEGER PRIMARY KEY CHECK (id = 1),
+                name TEXT NOT NULL DEFAULT 'default',
+                provider TEXT NOT NULL DEFAULT 'none',
+                enabled INTEGER NOT NULL DEFAULT 0,
+                model TEXT,
+                base_url TEXT,
+                api_key_value TEXT,
+                api_key_source TEXT NOT NULL DEFAULT 'none',
+                timeout_seconds INTEGER NOT NULL DEFAULT 30,
+                max_context_chars INTEGER NOT NULL DEFAULT 60000,
+                code_sharing_mode TEXT NOT NULL DEFAULT 'none',
+                allow_network INTEGER NOT NULL DEFAULT 0,
+                allow_llm INTEGER NOT NULL DEFAULT 0,
+                audit_enabled INTEGER NOT NULL DEFAULT 1,
+                organization TEXT,
+                azure_endpoint TEXT,
+                azure_deployment TEXT,
+                azure_api_version TEXT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
             """
         )
