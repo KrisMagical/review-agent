@@ -1,3 +1,4 @@
+
 .venv/
 __pycache__/
 .pytest_cache/
@@ -9,7 +10,10 @@ __pycache__/
 *.db
 *.sqlite
 review-*.md
+
 *.html
+!reviewagent/dashboard/templates/**/*.html
+
 .vscode/
 .env
 build/

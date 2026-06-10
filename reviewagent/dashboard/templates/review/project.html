@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Review Project</h2>
+{% if error %}<p class="error-message">{{ error }}</p>{% endif %}
+<section class="settings-warning">Project paths must be under REVIEWAGENT_ALLOWED_REVIEW_ROOTS.</section>
+<form class="settings-form" method="post" action="/review/project">
+  <label>
+    Project path
+    <input type="text" name="project_path" placeholder="/workspace/my-project" required>
+  </label>
+  <label>
+    Agents
+    <input type="text" name="agents" placeholder="quality,security">
+  </label>
+  <label>
+    LLM provider
+    <select name="llm_provider">
+      {% for value in ["none", "mock", "openai", "anthropic", "azure_openai", "openai_compatible", "ollama", "enterprise_gateway"] %}
+      <option value="{{ value }}">{{ value }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    Code sharing mode
+    <select name="code_sharing_mode">
+      {% for value in ["none", "summary_only", "snippets", "full_context"] %}
+      <option value="{{ value }}">{{ value }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <section class="settings-warning danger">full_context may send broader project context. Use summary_only for external providers.</section>
+  <div class="checkbox-row">
+    <label><input type="checkbox" name="save_result" checked> Save result</label>
+    <label><input type="checkbox" name="enable_agents"> Enable agents</label>
+    <label><input type="checkbox" name="enable_llm"> Enable LLM</label>
+    <label><input type="checkbox" name="allow_network"> Allow network</label>
+    <label><input type="checkbox" name="allow_llm"> Allow LLM network use</label>
+    <label><input type="checkbox" name="enable_enterprise_rules" checked> Enterprise rules</label>
+  </div>
+  <label>
+    Config path
+    <input type="text" name="config_path" placeholder="/workspace/reviewagent.yml">
+  </label>
+  <div class="actions"><button type="submit">Run project review</button></div>
+</form>
+{% endblock %}
