@@ -35,13 +35,13 @@ Security behavior:
 
 - empty diffs are rejected
 - uploads are read as UTF-8
-- upload size is limited by `REVIEWAGENT_MAX_UPLOAD_BYTES`
+- upload size is limited by `MGREVIEW_MAX_UPLOAD_BYTES`
 - uploaded files are not saved as source artifacts
 - zip/tar extraction is not supported
 - uploaded contents are not executed
 
 ```bash
-REVIEWAGENT_MAX_UPLOAD_BYTES=5242880
+MGREVIEW_MAX_UPLOAD_BYTES=5242880
 ```
 
 ## /review/project
@@ -51,7 +51,7 @@ Use this page to review a server-local project path.
 Allowed roots:
 
 ```bash
-REVIEWAGENT_ALLOWED_REVIEW_ROOTS=/workspace,/repos
+MGREVIEW_ALLOWED_REVIEW_ROOTS=/workspace,/repos
 ```
 
 Rules:
@@ -93,14 +93,14 @@ The form supports:
 `full_project`:
 
 - fetches selected repository files through GitHub Trees/Blob APIs
-- reads repository ReviewAgent config files
+- reads repository MagicReview config files
 - calls `ReviewService.review_project`
 - emits project-level findings in summary when not mappable to changed lines
 - skips secrets and enforces size limits
 
 ## Save Result
 
-When `save_result=true`, ReviewAgent stores:
+When `save_result=true`, MagicReview stores:
 
 - normalized issues
 - summary counts
@@ -160,3 +160,6 @@ Authorization: Bearer <token>
 - No RBAC or multi-user workspace.
 - GitHub PR review requires explicit GitHub token/network permission.
 - LLM providers remain disabled by default.
+
+
+

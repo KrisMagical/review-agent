@@ -8,7 +8,7 @@ from typing import Any
 
 from app.enterprise import EnterpriseRuleConfig
 from app.models.issue import Issue
-from reviewagent.connected import NetworkPolicy
+from magicreview.connected import NetworkPolicy
 
 
 @dataclass

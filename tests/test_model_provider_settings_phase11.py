@@ -1,8 +1,8 @@
 import httpx
 from fastapi.testclient import TestClient
 
-from reviewagent.dashboard import app as dashboard_app_module
-from reviewagent.dashboard.model_settings import (
+from magicreview.dashboard import app as dashboard_app_module
+from magicreview.dashboard.model_settings import (
     ModelProviderTester,
     ModelSettingsRepository,
     mask_api_key,
@@ -10,16 +10,16 @@ from reviewagent.dashboard.model_settings import (
 
 
 def auth_env(monkeypatch, tmp_path):
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(tmp_path / "models.db"))
-    monkeypatch.setenv("REVIEWAGENT_AUTH_ENABLED", "true")
-    monkeypatch.setenv("REVIEWAGENT_ADMIN_USERNAME", "admin")
-    monkeypatch.setenv("REVIEWAGENT_ADMIN_PASSWORD", "password")
-    monkeypatch.setenv("REVIEWAGENT_SESSION_SECRET", "test-secret")
-    monkeypatch.setenv("REVIEWAGENT_API_KEYS", "dev-token")
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(tmp_path / "models.db"))
+    monkeypatch.setenv("MGREVIEW_AUTH_ENABLED", "true")
+    monkeypatch.setenv("MGREVIEW_ADMIN_USERNAME", "admin")
+    monkeypatch.setenv("MGREVIEW_ADMIN_PASSWORD", "password")
+    monkeypatch.setenv("MGREVIEW_SESSION_SECRET", "test-secret")
+    monkeypatch.setenv("MGREVIEW_API_KEYS", "dev-token")
 
 
 def test_model_settings_repository_defaults_save_mask_clear_and_env_priority(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(tmp_path / "repo.db"))
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(tmp_path / "repo.db"))
     repo = ModelSettingsRepository()
 
     default = repo.get()
@@ -55,7 +55,7 @@ def test_model_settings_repository_defaults_save_mask_clear_and_env_priority(tmp
 
 
 def test_model_settings_repository_supports_anthropic_and_ollama(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(tmp_path / "providers.db"))
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(tmp_path / "providers.db"))
     repo = ModelSettingsRepository()
 
     anthropic = repo.save({"provider": "anthropic", "enabled": True, "api_key": "anthropic-secret"})
@@ -113,7 +113,7 @@ def test_model_settings_api_auth_save_test_and_clear(tmp_path, monkeypatch) -> N
 
 
 def test_provider_test_respects_network_policy_and_uses_mocked_http(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(tmp_path / "test.db"))
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(tmp_path / "test.db"))
     calls = {"count": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:

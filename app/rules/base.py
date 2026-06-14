@@ -1,4 +1,4 @@
-"""Common rule contracts for ReviewAgent."""
+"""Common rule contracts for magicreview."""
 
 from __future__ import annotations
 

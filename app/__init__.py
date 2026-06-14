@@ -1,1 +1,1 @@
-"""PR Review Agent - 代码审查工具"""
+"""Internal implementation modules for MagicReview."""

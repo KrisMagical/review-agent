@@ -1,2 +1,2 @@
-"""MCP server package for ReviewAgent."""
+"""MCP server package for magicreview."""
 

@@ -1,4 +1,4 @@
-# ReviewAgent GitHub App Example
+# MagicReview GitHub App Example
 
 This folder documents local GitHub App development. It does not include real credentials.
 
@@ -8,22 +8,22 @@ This folder documents local GitHub App development. It does not include real cre
 GITHUB_APP_ID=12345
 GITHUB_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
 GITHUB_WEBHOOK_SECRET="local-secret"
-GITHUB_APP_NAME="ReviewAgent"
-REVIEWAGENT_GITHUB_ENABLE_INLINE_COMMENTS=true
-REVIEWAGENT_GITHUB_ENABLE_SUMMARY_COMMENT=true
-REVIEWAGENT_GITHUB_MAX_INLINE_COMMENTS=30
+GITHUB_APP_NAME="MagicReview"
+MGREVIEW_GITHUB_ENABLE_INLINE_COMMENTS=true
+MGREVIEW_GITHUB_ENABLE_SUMMARY_COMMENT=true
+MGREVIEW_GITHUB_MAX_INLINE_COMMENTS=30
 ```
 
 ## Start
 
 ```bash
-python -m reviewagent.integrations.github.app
+python -m magicreview.integrations.github.app
 ```
 
 Installed console script:
 
 ```bash
-reviewagent-github-app
+mgreview-github-app
 ```
 
 ## Webhook Payload Shape

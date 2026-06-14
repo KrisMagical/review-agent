@@ -33,10 +33,10 @@ def test_readme_documents_offline_defaults_and_entrypoints() -> None:
     for expected in [
         "local-first",
         "Does not call real LLM providers by default",
-        "review --help",
-        "reviewagent-mcp",
-        "reviewagent-dashboard",
-        "reviewagent-github-app",
+        "mgreview --help",
+        "mgreview-mcp",
+        "mgreview-dashboard",
+        "mgreview-github-app",
         "docker compose up dashboard",
         "full_project",
     ]:

@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from app.agents.base import ReviewAgent
+from app.agents.base import BaseAgent
 from app.agents.context import AgentContext, AgentResult
 from app.agents.utils import dedupe_and_sort
 from app.enterprise import EnterpriseRuleEngine, RuleConfigLoader
 
 
-class KnowledgeAgent(ReviewAgent):
+class KnowledgeAgent(BaseAgent):
     """Load and execute configured enterprise policy rules."""
 
     name = "knowledge"

@@ -11,7 +11,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from reviewagent.mcp_server import tools as service_tools
+from magicreview.mcp_server import tools as service_tools
 
 
 logger = logging.getLogger(__name__)
@@ -115,7 +115,7 @@ REVIEW_DIFF_TOOL = ToolSpec(
 
 
 def list_review_tools() -> list[ToolSpec]:
-    """Return all ReviewAgent MCP tool specifications."""
+    """Return all magicreview MCP tool specifications."""
 
     return [REVIEW_FILE_TOOL, REVIEW_PROJECT_TOOL, REVIEW_DIFF_TOOL]
 
@@ -186,7 +186,7 @@ async def call_review_tool(name: str, arguments: dict[str, Any] | None) -> str:
         case "review_diff":
             return await review_diff(payload)
         case _:
-            raise ValueError(f"Unknown ReviewAgent tool: {name}")
+            raise ValueError(f"Unknown magicreview tool: {name}")
 
 
 def error_report(message: str) -> str:
@@ -214,7 +214,7 @@ async def _run_engine(func: Callable[[], str]) -> str:
     try:
         return await asyncio.to_thread(guarded_call)
     except Exception as exc:
-        logger.exception("ReviewAgent MCP tool execution failed.")
+        logger.exception("magicreview MCP tool execution failed.")
         return error_report(str(exc))
 
 

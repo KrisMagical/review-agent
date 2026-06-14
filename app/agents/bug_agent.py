@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import ast
 
-from app.agents.base import ReviewAgent
+from app.agents.base import BaseAgent
 from app.agents.context import AgentContext, AgentResult
 from app.agents.utils import call_name, dedupe_and_sort, parse_python, read_python_source
 from app.models.issue import Issue
@@ -12,7 +12,7 @@ from app.rules.bug import FileLeakRule, IndexRiskRule, KeyErrorRule, NoneRiskRul
 from app.rules.engine import RuleEngine
 
 
-class BugAgent(ReviewAgent):
+class BugAgent(BaseAgent):
     """Run runtime-risk rules and a few lightweight bug heuristics."""
 
     name = "bug"

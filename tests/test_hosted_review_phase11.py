@@ -4,19 +4,19 @@ from pathlib import Path
 import httpx
 from fastapi.testclient import TestClient
 
-from reviewagent.dashboard import app as dashboard_app_module
-from reviewagent.dashboard.hosted_review import HostedReviewService, ensure_allowed_path, parse_github_pr_url
-from reviewagent.storage.repository import ReviewRepository
+from magicreview.dashboard import app as dashboard_app_module
+from magicreview.dashboard.hosted_review import HostedReviewService, ensure_allowed_path, parse_github_pr_url
+from magicreview.storage.repository import ReviewRepository
 
 
 def auth_env(monkeypatch, tmp_path: Path) -> None:
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(tmp_path / "hosted.db"))
-    monkeypatch.setenv("REVIEWAGENT_AUTH_ENABLED", "true")
-    monkeypatch.setenv("REVIEWAGENT_ADMIN_USERNAME", "admin")
-    monkeypatch.setenv("REVIEWAGENT_ADMIN_PASSWORD", "password")
-    monkeypatch.setenv("REVIEWAGENT_SESSION_SECRET", "test-secret")
-    monkeypatch.setenv("REVIEWAGENT_API_KEYS", "dev-token")
-    monkeypatch.setenv("REVIEWAGENT_ALLOWED_REVIEW_ROOTS", str(tmp_path))
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(tmp_path / "hosted.db"))
+    monkeypatch.setenv("MGREVIEW_AUTH_ENABLED", "true")
+    monkeypatch.setenv("MGREVIEW_ADMIN_USERNAME", "admin")
+    monkeypatch.setenv("MGREVIEW_ADMIN_PASSWORD", "password")
+    monkeypatch.setenv("MGREVIEW_SESSION_SECRET", "test-secret")
+    monkeypatch.setenv("MGREVIEW_API_KEYS", "dev-token")
+    monkeypatch.setenv("MGREVIEW_ALLOWED_REVIEW_ROOTS", str(tmp_path))
 
 
 def sample_diff() -> str:
@@ -58,7 +58,7 @@ def test_post_diff_text_save_and_no_save(tmp_path: Path, monkeypatch) -> None:
 
 def test_diff_upload_empty_and_too_large(tmp_path: Path, monkeypatch) -> None:
     auth_env(monkeypatch, tmp_path)
-    monkeypatch.setenv("REVIEWAGENT_MAX_UPLOAD_BYTES", "20")
+    monkeypatch.setenv("MGREVIEW_MAX_UPLOAD_BYTES", "20")
     client = TestClient(dashboard_app_module.app)
     client.post("/login", data={"username": "admin", "password": "password", "next": "/review/diff"})
 
@@ -80,7 +80,7 @@ def test_project_review_allowed_roots_and_config_path(tmp_path: Path, monkeypatc
     project = tmp_path / "repo"
     project.mkdir()
     (project / "app.py").write_text("def run(a):\n    return a + 42\n", encoding="utf-8")
-    config = project / "reviewagent.yml"
+    config = project / "magicreview.yml"
     config.write_text("rules: {}\n", encoding="utf-8")
     client = TestClient(dashboard_app_module.app)
     headers = {"Authorization": "Bearer dev-token"}

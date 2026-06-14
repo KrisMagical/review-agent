@@ -1,0 +1,1 @@
+"""magicreview Dashboard."""

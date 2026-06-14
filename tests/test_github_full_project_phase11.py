@@ -4,13 +4,13 @@ from pathlib import Path
 
 import httpx
 
-from reviewagent.dashboard.hosted_review import HostedReviewService
-from reviewagent.integrations.github.client import GitHubAppClient, GitHubClientError
-from reviewagent.integrations.github.config import GitHubAppConfig
-from reviewagent.integrations.github.formatter import format_summary_comment
-from reviewagent.integrations.github.models import PullRequestEvent
-from reviewagent.integrations.github.repository_fetcher import GitHubRepositoryFetcher
-from reviewagent.integrations.github.reviewer import GitHubPullRequestReviewer
+from magicreview.dashboard.hosted_review import HostedReviewService
+from magicreview.integrations.github.client import GitHubAppClient, GitHubClientError
+from magicreview.integrations.github.config import GitHubAppConfig
+from magicreview.integrations.github.formatter import format_summary_comment
+from magicreview.integrations.github.models import PullRequestEvent
+from magicreview.integrations.github.repository_fetcher import GitHubRepositoryFetcher
+from magicreview.integrations.github.reviewer import GitHubPullRequestReviewer
 
 
 def encoded(text: str) -> str:
@@ -25,7 +25,7 @@ def tree_payload() -> dict:
     return {
         "tree": [
             {"path": "app/main.py", "type": "blob", "sha": "py", "size": 32},
-            {"path": "reviewagent.yml", "type": "blob", "sha": "cfg", "size": 10},
+            {"path": "magicreview.yml", "type": "blob", "sha": "cfg", "size": 10},
             {"path": ".env", "type": "blob", "sha": "env", "size": 10},
             {"path": "node_modules/x.py", "type": "blob", "sha": "skip", "size": 10},
         ],
@@ -34,11 +34,11 @@ def tree_payload() -> dict:
 
 
 def test_review_mode_config_defaults_full_project_and_invalid(monkeypatch) -> None:
-    monkeypatch.delenv("REVIEWAGENT_GITHUB_REVIEW_MODE", raising=False)
+    monkeypatch.delenv("MGREVIEW_GITHUB_REVIEW_MODE", raising=False)
     assert GitHubAppConfig.from_env().review_mode == "diff_only"
-    monkeypatch.setenv("REVIEWAGENT_GITHUB_REVIEW_MODE", "full_project")
+    monkeypatch.setenv("MGREVIEW_GITHUB_REVIEW_MODE", "full_project")
     assert GitHubAppConfig.from_env().review_mode == "full_project"
-    monkeypatch.setenv("REVIEWAGENT_GITHUB_REVIEW_MODE", "wat")
+    monkeypatch.setenv("MGREVIEW_GITHUB_REVIEW_MODE", "wat")
     assert GitHubAppConfig.from_env().review_mode == "diff_only"
 
 
@@ -76,7 +76,7 @@ def test_repository_fetcher_filters_files_limits_and_cleans_temp(tmp_path: Path)
     workspace = fetcher.fetch_pull_request_project("octo", "repo", "sha")
     root = workspace.root
     assert (root / "app/main.py").exists()
-    assert (root / "reviewagent.yml").exists()
+    assert (root / "magicreview.yml").exists()
     assert not (root / ".env").exists()
     assert not (root / "node_modules/x.py").exists()
     workspace.cleanup()
@@ -186,7 +186,7 @@ def test_format_summary_comment_includes_review_mode() -> None:
 
 
 def test_hosted_review_github_pr_full_project_mock_success(tmp_path: Path, monkeypatch) -> None:
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(tmp_path / "db.sqlite"))
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(tmp_path / "db.sqlite"))
     monkeypatch.setenv("GITHUB_TOKEN", "token")
 
     def handler(request: httpx.Request) -> httpx.Response:

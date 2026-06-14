@@ -95,7 +95,7 @@ def test_project_reviewer_json_is_valid(tmp_path: Path) -> None:
     (tmp_path / "pkg" / "a.py").write_text("def run(a):\n    return a + 42\n", encoding="utf-8")
 
     result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "project", str(tmp_path)],
+        [sys.executable, "-m", "magicreview.cli.main", "project", str(tmp_path)],
         check=True,
         capture_output=True,
         text=True,

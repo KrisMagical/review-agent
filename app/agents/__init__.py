@@ -1,7 +1,7 @@
 """Phase 6 multi-agent review platform."""
 
 from app.agents.architecture_agent import ArchitectureAgent
-from app.agents.base import ReviewAgent
+from app.agents.base import BaseAgent
 from app.agents.bug_agent import BugAgent
 from app.agents.context import AgentContext, AgentResult
 from app.agents.coordinator import ReviewCoordinator
@@ -18,7 +18,7 @@ __all__ = [
     "KnowledgeAgent",
     "QualityAgent",
     "RefactorAgent",
-    "ReviewAgent",
+    "BaseAgent",
     "ReviewCoordinator",
     "SecurityAgent",
 ]

@@ -1,4 +1,4 @@
-"""Public issue model for ReviewAgent Phase 1."""
+"""Public issue model for magicreview Phase 1."""
 
 from __future__ import annotations
 

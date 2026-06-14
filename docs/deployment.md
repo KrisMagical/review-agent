@@ -4,7 +4,7 @@ This guide summarizes local, Docker, server, Dashboard, GitHub App, and MCP depl
 
 ## Deployment Overview
 
-ReviewAgent supports:
+MagicReview supports:
 
 - Local CLI execution
 - Docker image
@@ -19,8 +19,8 @@ Defaults are local-first and offline. Real LLM providers and GitHub API calls re
 
 ```bash
 pip install -e ".[all,dev]"
-review --help
-review project examples/multi_agent_project --agents --format terminal
+mgreview --help
+mgreview project examples/multi_agent_project --agents --format terminal
 ```
 
 The local CLI does not start web services and does not require credentials.
@@ -28,14 +28,14 @@ The local CLI does not start web services and does not require credentials.
 ## Docker Mode
 
 ```bash
-docker build -t reviewagent .
-docker run --rm reviewagent review --help
+docker build -t magicreview .
+docker run --rm magicreview mgreview --help
 ```
 
 Review a local project:
 
 ```bash
-docker run --rm -v "$PWD:/workspace" reviewagent review project /workspace --format json
+docker run --rm -v "$PWD:/workspace" magicreview mgreview project /workspace --format json
 ```
 
 See [Docker](docker.md) for Windows PowerShell examples.
@@ -53,7 +53,7 @@ Core services:
 - `github-app`: `http://127.0.0.1:8000`
 - `mcp`: optional stdio service for advanced local integration
 
-SQLite data persists in `./.reviewagent` through the `/data` container volume.
+SQLite data persists in `./.magicreview` through the `/data` container volume.
 
 ## Server Deployment Mode
 
@@ -72,8 +72,8 @@ Do not expose an unauthenticated Dashboard to the public internet.
 Local:
 
 ```bash
-review dashboard init-db
-review dashboard serve --host 127.0.0.1 --port 8080
+mgreview dashboard init-db
+mgreview dashboard serve --host 127.0.0.1 --port 8080
 ```
 
 Docker:
@@ -85,13 +85,13 @@ docker compose up dashboard
 Important environment variables:
 
 ```bash
-REVIEWAGENT_DB_PATH=/data/reviewagent.db
-REVIEWAGENT_DASHBOARD_HOST=0.0.0.0
-REVIEWAGENT_DASHBOARD_PORT=8080
-REVIEWAGENT_AUTH_ENABLED=true
-REVIEWAGENT_ADMIN_PASSWORD=...
-REVIEWAGENT_SESSION_SECRET=...
-REVIEWAGENT_API_KEYS=...
+MGREVIEW_DB_PATH=/data/magicreview.db
+MGREVIEW_DASHBOARD_HOST=0.0.0.0
+MGREVIEW_DASHBOARD_PORT=8080
+MGREVIEW_AUTH_ENABLED=true
+MGREVIEW_ADMIN_PASSWORD=...
+MGREVIEW_SESSION_SECRET=...
+MGREVIEW_API_KEYS=...
 ```
 
 ## GitHub App Deployment
@@ -99,7 +99,7 @@ REVIEWAGENT_API_KEYS=...
 The GitHub App webhook server needs a public webhook URL.
 
 ```bash
-reviewagent-github-app
+mgreview-github-app
 ```
 
 Required:
@@ -117,7 +117,7 @@ GITHUB_WEBHOOK_SECRET=...
 MCP is a local stdio server:
 
 ```bash
-reviewagent-mcp
+mgreview-mcp
 ```
 
 It does not start HTTP. It is mainly intended for local tools such as Claude Desktop or Cursor. Remote/hosted MCP is a future or advanced deployment path.
@@ -126,12 +126,12 @@ It does not start HTTP. It is mainly intended for local tools such as Claude Des
 
 Common groups:
 
-- Dashboard: `REVIEWAGENT_DASHBOARD_HOST`, `REVIEWAGENT_DASHBOARD_PORT`
-- Storage: `REVIEWAGENT_DB_PATH`
-- Auth: `REVIEWAGENT_AUTH_ENABLED`, `REVIEWAGENT_ADMIN_PASSWORD`, `REVIEWAGENT_SESSION_SECRET`, `REVIEWAGENT_API_KEYS`
+- Dashboard: `MGREVIEW_DASHBOARD_HOST`, `MGREVIEW_DASHBOARD_PORT`
+- Storage: `MGREVIEW_DB_PATH`
+- Auth: `MGREVIEW_AUTH_ENABLED`, `MGREVIEW_ADMIN_PASSWORD`, `MGREVIEW_SESSION_SECRET`, `MGREVIEW_API_KEYS`
 - GitHub App: `GITHUB_APP_ID`, `GITHUB_PRIVATE_KEY`, `GITHUB_WEBHOOK_SECRET`
-- LLM: `REVIEWAGENT_LLM_PROVIDER`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
-- Network policy: `REVIEWAGENT_NETWORK_ENABLED`, `REVIEWAGENT_ALLOW_LLM`, `REVIEWAGENT_CODE_SHARING_MODE`
+- LLM: `MGREVIEW_LLM_PROVIDER`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
+- Network policy: `MGREVIEW_NETWORK_ENABLED`, `MGREVIEW_ALLOW_LLM`, `MGREVIEW_CODE_SHARING_MODE`
 
 Never commit `.env`.
 
@@ -140,13 +140,13 @@ Never commit `.env`.
 Default local DB:
 
 ```text
-.reviewagent/reviewagent.db
+.magicreview/magicreview.db
 ```
 
 Docker DB:
 
 ```text
-/data/reviewagent.db
+/data/magicreview.db
 ```
 
 Back up the SQLite database before upgrades.
@@ -179,7 +179,7 @@ Use one of:
 - Cloudflare Tunnel
 - Tailscale or WireGuard private network
 
-Set `REVIEWAGENT_COOKIE_SECURE=true` when serving the Dashboard over HTTPS.
+Set `MGREVIEW_COOKIE_SECURE=true` when serving the Dashboard over HTTPS.
 
 ## Production Checklist
 
@@ -201,3 +201,7 @@ Set `REVIEWAGENT_COOKIE_SECURE=true` when serving the Dashboard over HTTPS.
 - Docker config: `docker compose config`
 - Docker build timeout: pre-pull `python:3.12-slim` or configure a registry mirror
 - Missing GitHub credentials: Dashboard can still start; webhook processing needs credentials
+
+
+
+

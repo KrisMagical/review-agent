@@ -3,9 +3,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "reviewagent"
-version = "0.1.0"
-description = "Local-first, agent-native code review platform with CLI, MCP, GitHub App, enterprise rules, optional LLM review, and dashboard."
+name = "magicreview"
+version = "0.1.1"
+description = "MagicReview: a local-first, self-hostable AI code review platform."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { file = "LICENSE" }
@@ -16,13 +16,18 @@ maintainers = [
     { name = "KrisMagical" },
 ]
 keywords = [
+    "magicreview",
+    "mgreview",
+    "ai-code-review",
     "code-review",
-    "static-analysis",
+    "local-first",
+    "self-hosted",
     "mcp",
     "github-app",
     "llm",
-    "developer-tools",
-    "quality-assurance",
+    "static-analysis",
+    "enterprise-rules",
+    "dashboard",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -94,19 +99,18 @@ Documentation = "https://github.com/KrisMagical/review-agent/tree/main/docs"
 Changelog = "https://github.com/KrisMagical/review-agent/blob/main/CHANGELOG.md"
 
 [project.scripts]
-review = "reviewagent.cli.main:main"
-reviewagent = "reviewagent.cli.main:main"
-reviewagent-mcp = "reviewagent.mcp_server.server:main"
-reviewagent-github-app = "reviewagent.integrations.github.app:main"
-reviewagent-dashboard = "reviewagent.dashboard.app:main"
+mgreview = "magicreview.cli.main:main"
+mgreview-mcp = "magicreview.mcp_server.server:main"
+mgreview-dashboard = "magicreview.dashboard.app:main"
+mgreview-github-app = "magicreview.integrations.github.app:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["app*", "mcp_server*", "reviewagent*"]
+include = ["app*", "mcp_server*", "magicreview*"]
 
 [tool.setuptools.package-data]
 "app.llm" = ["prompts/*.md"]
-"reviewagent.dashboard" = ["templates/*.html", "templates/review/*.html", "static/*.css"]
+"magicreview.dashboard" = ["templates/*.html", "templates/review/*.html", "static/*.css"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

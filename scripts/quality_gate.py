@@ -1,4 +1,4 @@
-"""Run ReviewAgent's local release quality gate.
+"""Run MagicReview's local release quality gate.
 
 The default gate avoids Docker so it works on lightweight Python environments.
 Pass --docker to include Docker build and Compose validation.
@@ -18,25 +18,25 @@ def run(command: list[str]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run ReviewAgent local quality gate.")
+    parser = argparse.ArgumentParser(description="Run MagicReview local quality gate.")
     parser.add_argument("--docker", action="store_true", help="Include Docker build/run and docker compose config.")
     args = parser.parse_args()
 
     commands = [
         [sys.executable, "-m", "pytest", "--basetemp=.pytest_tmp"],
-        ["review", "--help"],
-        ["review", "--version"],
-        ["review", "file", "examples/bad_code.py", "--format", "json"],
-        ["review", "project", "examples/multi_agent_project", "--agents", "--format", "json"],
+        ["mgreview", "--help"],
+        ["mgreview", "--version"],
+        ["mgreview", "file", "examples/bad_code.py", "--format", "json"],
+        ["mgreview", "project", "examples/multi_agent_project", "--agents", "--format", "json"],
         [sys.executable, "-m", "build", "--no-isolation"],
     ]
     if args.docker:
         commands.extend(
             [
-                ["docker", "build", "-t", "reviewagent:test", "."],
-                ["docker", "run", "--rm", "reviewagent:test", "review", "--help"],
-                ["docker", "run", "--rm", "reviewagent:test", "review", "--version"],
-                ["docker", "run", "--rm", "reviewagent:test", "python", "-m", "reviewagent.cli.main", "--help"],
+                ["docker", "build", "-t", "magicreview:test", "."],
+                ["docker", "run", "--rm", "magicreview:test", "mgreview", "--help"],
+                ["docker", "run", "--rm", "magicreview:test", "mgreview", "--version"],
+                ["docker", "run", "--rm", "magicreview:test", "python", "-m", "magicreview.cli.main", "--help"],
                 ["docker", "compose", "config"],
             ]
         )

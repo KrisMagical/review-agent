@@ -1,6 +1,6 @@
 # Phase 6 Multi-Agent Review
 
-Phase 6 adds a synchronous multi-agent review layer on top of the existing ReviewAgent analyzers. It does not replace the Phase 1-5.5 pipeline; it is enabled only when requested.
+Phase 6 adds a synchronous multi-agent review layer on top of the existing MagicReview analyzers. It does not replace the Phase 1-5.5 pipeline; it is enabled only when requested.
 
 ## Coordinator
 
@@ -33,10 +33,10 @@ Default order:
 ## CLI
 
 ```bash
-python -m reviewagent.cli.main project examples/multi_agent_project --agents
-python -m reviewagent.cli.main project examples/multi_agent_project --agents quality,security
-python -m reviewagent.cli.main project examples/multi_agent_project --agents --config examples/multi_agent_project/reviewagent.yml
-python -m reviewagent.cli.main project examples/multi_agent_project --agents --llm --llm-provider mock
+python -m magicreview.cli.main project examples/multi_agent_project --agents
+python -m magicreview.cli.main project examples/multi_agent_project --agents quality,security
+python -m magicreview.cli.main project examples/multi_agent_project --agents --config examples/multi_agent_project/magicreview.yml
+python -m magicreview.cli.main project examples/multi_agent_project --agents --llm --llm-provider mock
 ```
 
 `--agents` without a value runs all agents. A comma-separated value runs only that subset.
@@ -50,7 +50,7 @@ python -m reviewagent.cli.main project examples/multi_agent_project --agents --l
   "path": "examples/multi_agent_project",
   "enable_agents": true,
   "agents": ["quality", "security"],
-  "config_path": "examples/multi_agent_project/reviewagent.yml",
+  "config_path": "examples/multi_agent_project/magicreview.yml",
   "enable_enterprise_rules": true,
   "enable_llm": false
 }
@@ -67,3 +67,6 @@ LLM architecture review remains opt-in. `ArchitectureAgent` calls it only when `
 ## Limits
 
 The scheduler is synchronous and local. Agents do not persist state, write source files, call remote rule markets, open pull requests, or run code from the reviewed project. Phase 7+ can add richer orchestration, GitHub workflows, dashboards, and persistent governance data.
+
+
+

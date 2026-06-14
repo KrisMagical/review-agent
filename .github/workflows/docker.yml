@@ -14,14 +14,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build image
-        run: docker build -t reviewagent:test .
+        run: docker build -t magicreview:test .
 
       - name: Smoke test CLI in Docker
         run: |
-          docker run --rm reviewagent:test review --help
-          docker run --rm reviewagent:test review --version
-          docker run --rm reviewagent:test python -m reviewagent.cli.main --help
-          docker run --rm reviewagent:test review file examples/bad_code.py --format json
+          docker run --rm magicreview:test mgreview --help
+          docker run --rm magicreview:test mgreview --version
+          docker run --rm magicreview:test python -m magicreview.cli.main --help
+          docker run --rm magicreview:test mgreview file examples/bad_code.py --format json
 
       - name: Validate Compose config
         run: docker compose config

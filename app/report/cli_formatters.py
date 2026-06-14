@@ -1,4 +1,4 @@
-"""Human and machine output formatters for the ReviewAgent CLI."""
+"""Human and machine output formatters for the magicreview CLI."""
 
 from __future__ import annotations
 
@@ -68,7 +68,7 @@ class TerminalReportFormatter(BaseCliFormatter):
         normalized = normalize_result(result)
         summary = normalized["summary"]
         lines = [
-            "ReviewAgent Report",
+            "MagicReview Report",
             "",
             "Summary:",
             f"  Critical: {summary['critical']}",
@@ -100,7 +100,7 @@ class MarkdownReportFormatter(BaseCliFormatter):
         normalized = normalize_result(result)
         summary = normalized["summary"]
         lines = [
-            "# ReviewAgent Report",
+            "# MagicReview Report",
             "",
             "## Summary",
             "",
@@ -150,7 +150,7 @@ class HtmlReportFormatter(BaseCliFormatter):
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>ReviewAgent Report</title>
+  <title>MagicReview Report</title>
   <style>
     body {{ font-family: Arial, sans-serif; margin: 32px; color: #1f2937; }}
     table {{ border-collapse: collapse; width: 100%; margin: 16px 0; }}
@@ -163,7 +163,7 @@ class HtmlReportFormatter(BaseCliFormatter):
   </style>
 </head>
 <body>
-  <h1>ReviewAgent Report</h1>
+  <h1>MagicReview Report</h1>
   <h2>Summary</h2>
   <table>
     <tr><th>Severity</th><th>Count</th></tr>

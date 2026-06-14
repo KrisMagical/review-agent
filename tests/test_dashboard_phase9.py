@@ -6,15 +6,15 @@ from pathlib import Path
 
 import pytest
 
-from reviewagent.dashboard import app as dashboard_app_module
-from reviewagent.dashboard.classifier import classify_issue
-from reviewagent.dashboard.service import StatisticsService
-from reviewagent.integrations.github.client import GitHubAppClient
-from reviewagent.integrations.github.config import GitHubAppConfig
-from reviewagent.integrations.github.models import PullRequestEvent
-from reviewagent.integrations.github.reviewer import GitHubPullRequestReviewer
-from reviewagent.storage.database import init_db
-from reviewagent.storage.repository import ReviewPersistenceService, ReviewRepository
+from magicreview.dashboard import app as dashboard_app_module
+from magicreview.dashboard.classifier import classify_issue
+from magicreview.dashboard.service import StatisticsService
+from magicreview.integrations.github.client import GitHubAppClient
+from magicreview.integrations.github.config import GitHubAppConfig
+from magicreview.integrations.github.models import PullRequestEvent
+from magicreview.integrations.github.reviewer import GitHubPullRequestReviewer
+from magicreview.storage.database import init_db
+from magicreview.storage.repository import ReviewPersistenceService, ReviewRepository
 
 
 def result_payload() -> dict:
@@ -28,7 +28,7 @@ def result_payload() -> dict:
 
 
 def test_storage_init_save_summary_fingerprint_and_empty_issues(tmp_path: Path) -> None:
-    db_path = tmp_path / "reviewagent.db"
+    db_path = tmp_path / "magicreview.db"
     init_db(db_path)
     service = ReviewPersistenceService(db_path)
 
@@ -94,7 +94,7 @@ def test_statistics_service_overview_trends_and_team_stats(tmp_path: Path) -> No
 
 def test_dashboard_api_functions_and_not_found(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     db_path = tmp_path / "api.db"
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(db_path))
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(db_path))
     service = ReviewPersistenceService(db_path)
     review_id = service.save_review_result(result_payload(), source="cli", target_type="project", target_ref=".", project_name="demo")
 
@@ -112,11 +112,11 @@ def test_dashboard_api_functions_and_not_found(tmp_path: Path, monkeypatch: pyte
 
 def test_dashboard_pages_return_html_fallback(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     db_path = tmp_path / "pages.db"
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(db_path))
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(db_path))
     service = ReviewPersistenceService(db_path)
     review_id = service.save_review_result(result_payload(), source="cli", target_type="project", target_ref=".", project_name="demo<script>")
 
-    assert "ReviewAgent" in str(dashboard_app_module.dashboard_index(None))
+    assert "MagicReview" in str(dashboard_app_module.dashboard_index(None))
     assert "Projects" in str(dashboard_app_module.dashboard_projects(None))
     assert "demo" in str(dashboard_app_module.dashboard_project_detail(None, 1))
     assert f"Review #{review_id}" in str(dashboard_app_module.dashboard_review_detail(None, review_id))
@@ -126,17 +126,17 @@ def test_cli_save_and_dashboard_init_db(tmp_path: Path) -> None:
     db_path = tmp_path / "cli.db"
     target = tmp_path / "bad.py"
     target.write_text("def run(a):\n    return a + 42\n", encoding="utf-8")
-    env = {**os.environ, "REVIEWAGENT_DB_PATH": str(db_path)}
+    env = {**os.environ, "MGREVIEW_DB_PATH": str(db_path)}
 
     review_result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "file", str(target), "--save", "--format", "json"],
+        [sys.executable, "-m", "magicreview.cli.main", "file", str(target), "--save", "--format", "json"],
         check=True,
         capture_output=True,
         text=True,
         env=env,
     )
     init_result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "dashboard", "init-db"],
+        [sys.executable, "-m", "magicreview.cli.main", "dashboard", "init-db"],
         check=True,
         capture_output=True,
         text=True,

@@ -14,7 +14,7 @@ from app.parser import DiffParser, build_changed_source
 from app.project.scanner import ProjectScanner
 from app.reviewer.project_reviewer import ProjectReviewer
 from app.rules.engine import RuleEngine
-from reviewagent.connected import NetworkPolicy
+from magicreview.connected import NetworkPolicy
 
 
 class ReviewService:

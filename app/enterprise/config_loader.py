@@ -11,12 +11,12 @@ from app.models.issue import Issue
 
 
 DEFAULT_CONFIG_NAMES = (
-    "reviewagent.yml",
-    "reviewagent.yaml",
-    "reviewagent.json",
-    ".reviewagent.yml",
-    ".reviewagent.yaml",
-    ".reviewagent.json",
+    "magicreview.yml",
+    "magicreview.yaml",
+    "magicreview.json",
+    ".magicreview.yml",
+    ".magicreview.yaml",
+    ".magicreview.json",
 )
 VALID_SEVERITIES = {"critical", "high", "medium", "low"}
 

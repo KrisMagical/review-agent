@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from app.agents.architecture_agent import ArchitectureAgent
-from app.agents.base import ReviewAgent
+from app.agents.base import BaseAgent
 from app.agents.bug_agent import BugAgent
 from app.agents.context import AgentContext, AgentResult
 from app.agents.knowledge_agent import KnowledgeAgent
@@ -16,20 +16,20 @@ from app.agents.security_agent import SecurityAgent
 from app.agents.utils import dedupe_and_sort
 from app.models.issue import Issue
 from app.project.scanner import ProjectScanner
-from reviewagent.connected import NetworkPolicy
+from magicreview.connected import NetworkPolicy
 
 
 DEFAULT_AGENT_ORDER = ("knowledge", "quality", "bug", "security", "architecture", "refactor")
 
 
-def default_agents() -> list[ReviewAgent]:
+def default_agents() -> list[BaseAgent]:
     return [KnowledgeAgent(), QualityAgent(), BugAgent(), SecurityAgent(), ArchitectureAgent(), RefactorAgent()]
 
 
 class ReviewCoordinator:
     """Build agent context, run agents, and return a stable Issue report."""
 
-    def __init__(self, agents: list[ReviewAgent] | None = None, *, scanner: ProjectScanner | None = None) -> None:
+    def __init__(self, agents: list[BaseAgent] | None = None, *, scanner: ProjectScanner | None = None) -> None:
         self.agents = agents or default_agents()
         self.scanner = scanner or ProjectScanner()
 
@@ -87,7 +87,7 @@ class ReviewCoordinator:
         return results
 
     @property
-    def agent_map(self) -> dict[str, ReviewAgent]:
+    def agent_map(self) -> dict[str, BaseAgent]:
         return {agent.name: agent for agent in self.agents}
 
     @staticmethod

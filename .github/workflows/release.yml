@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      REVIEWAGENT_LLM_PROVIDER: none
-      REVIEWAGENT_NETWORK_ENABLED: "false"
-      REVIEWAGENT_ALLOW_LLM: "false"
-      REVIEWAGENT_CODE_SHARING_MODE: none
+      MGREVIEW_LLM_PROVIDER: none
+      MGREVIEW_NETWORK_ENABLED: "false"
+      MGREVIEW_ALLOW_LLM: "false"
+      MGREVIEW_CODE_SHARING_MODE: none
 
     steps:
       - name: Checkout
@@ -38,9 +38,9 @@ jobs:
 
       - name: Smoke test CLI
         run: |
-          review --help
-          review --version
-          python -m reviewagent.cli.main --help
+          mgreview --help
+          mgreview --version
+          python -m magicreview.cli.main --help
 
       - name: Build distributions
         run: python -m build

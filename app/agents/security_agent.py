@@ -5,7 +5,7 @@ from __future__ import annotations
 import ast
 import re
 
-from app.agents.base import ReviewAgent
+from app.agents.base import BaseAgent
 from app.agents.context import AgentContext, AgentResult
 from app.agents.utils import call_name, dedupe_and_sort, parse_python, read_python_source
 from app.models.issue import Issue
@@ -13,7 +13,7 @@ from app.rules.bug import PathTraversalRule, SQLInjectionRule
 from app.rules.engine import RuleEngine
 
 
-class SecurityAgent(ReviewAgent):
+class SecurityAgent(BaseAgent):
     """Run security rules and lightweight secret/command injection checks."""
 
     name = "security"

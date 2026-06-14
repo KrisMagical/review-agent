@@ -66,6 +66,8 @@ class RuffAdapter:
                     command,
                     capture_output=True,
                     text=True,
+                    encoding="utf-8",
+                    errors="replace",
                     timeout=self.timeout_seconds,
                     check=False,
                 )
@@ -77,7 +79,8 @@ class RuffAdapter:
                 return None
 
             last_result = result
-            if result.returncode == 2 and ("unexpected argument" in result.stderr or "unexpected option" in result.stderr):
+            stderr = result.stderr or ""
+            if result.returncode == 2 and ("unexpected argument" in stderr or "unexpected option" in stderr):
                 continue
             break
 

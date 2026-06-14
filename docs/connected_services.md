@@ -1,6 +1,6 @@
 # Connected Services
 
-ReviewAgent is local-first and offline by default. Connected Services are opt-in integrations that may call external systems such as LLM providers or GitHub APIs.
+MagicReview is local-first and offline by default. Connected Services are opt-in integrations that may call external systems such as LLM providers or GitHub APIs.
 
 ## Connected Services Overview
 
@@ -44,8 +44,8 @@ Real LLM providers require:
 CLI:
 
 ```bash
-review project . --llm --llm-provider mock
-review project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
+mgreview project . --llm --llm-provider mock
+mgreview project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
 ```
 
 `--llm` alone is not network consent.
@@ -57,8 +57,8 @@ GitHub App and Hosted Review GitHub PR mode call GitHub APIs only when configure
 GitHub App review mode:
 
 ```bash
-REVIEWAGENT_GITHUB_REVIEW_MODE=diff_only
-REVIEWAGENT_GITHUB_REVIEW_MODE=full_project
+MGREVIEW_GITHUB_REVIEW_MODE=diff_only
+MGREVIEW_GITHUB_REVIEW_MODE=full_project
 ```
 
 - `diff_only`: fetches the PR diff and reviews changed lines.
@@ -71,7 +71,7 @@ REVIEWAGENT_GITHUB_REVIEW_MODE=full_project
 Current MCP is local stdio:
 
 ```bash
-reviewagent-mcp
+mgreview-mcp
 ```
 
 `review_project` can accept a `network_policy` for optional LLM review. Without it, MCP remains offline.
@@ -133,9 +133,9 @@ MCP:
 GitHub full project:
 
 ```bash
-REVIEWAGENT_GITHUB_REVIEW_MODE=full_project
-REVIEWAGENT_GITHUB_ENABLE_AGENTS=true
-REVIEWAGENT_GITHUB_ENABLE_LLM=false
+MGREVIEW_GITHUB_REVIEW_MODE=full_project
+MGREVIEW_GITHUB_ENABLE_AGENTS=true
+MGREVIEW_GITHUB_ENABLE_LLM=false
 ```
 
 ## Current Limits
@@ -144,3 +144,6 @@ REVIEWAGENT_GITHUB_ENABLE_LLM=false
 - No SaaS control plane.
 - LLM usage accounting is limited to local audit records.
 - `full_context` depends on provider limits and should be avoided for sensitive repositories.
+
+
+

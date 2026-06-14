@@ -8,7 +8,7 @@ from app.report.cli_formatters import HtmlReportFormatter, JsonReportFormatter, 
 
 def run_cli(*args: str, input_text: str | None = None) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", *args],
+        [sys.executable, "-m", "magicreview.cli.main", *args],
         input=input_text,
         capture_output=True,
         text=True,
@@ -51,11 +51,11 @@ def test_file_command_formats_output_filtering_and_fail_on(tmp_path: Path) -> No
 
     terminal_result = run_cli("file", str(target), "--format", "terminal")
     assert terminal_result.returncode == 0
-    assert "ReviewAgent Report" in terminal_result.stdout
+    assert "MagicReview Report" in terminal_result.stdout
 
     markdown_result = run_cli("file", str(target), "--format", "markdown")
     assert markdown_result.returncode == 0
-    assert "# ReviewAgent Report" in markdown_result.stdout
+    assert "# MagicReview Report" in markdown_result.stdout
 
     html_result = run_cli("file", str(target), "--format", "html")
     assert html_result.returncode == 0
@@ -65,7 +65,7 @@ def test_file_command_formats_output_filtering_and_fail_on(tmp_path: Path) -> No
     output_result = run_cli("file", str(target), "--format", "markdown", "--output", str(output_file))
     assert output_result.returncode == 0
     assert output_result.stdout == ""
-    assert "# ReviewAgent Report" in output_file.read_text(encoding="utf-8")
+    assert "# MagicReview Report" in output_file.read_text(encoding="utf-8")
 
     filtered_result = run_cli("file", str(target), "--format", "json", "--severity", "high", "--max-issues", "1")
     filtered_payload = json.loads(filtered_result.stdout)
@@ -85,7 +85,7 @@ def test_diff_command_stdin_file_output_and_empty_diff(tmp_path: Path) -> None:
     output_file = tmp_path / "diff-review.md"
     file_result = run_cli("diff", "--file", str(patch_file), "--format", "markdown", "--output", str(output_file))
     assert file_result.returncode == 0
-    assert "ReviewAgent Report" in output_file.read_text(encoding="utf-8")
+    assert "MagicReview Report" in output_file.read_text(encoding="utf-8")
 
     empty_result = run_cli("diff", "--format", "json", input_text="")
     assert empty_result.returncode == 0
@@ -93,7 +93,7 @@ def test_diff_command_stdin_file_output_and_empty_diff(tmp_path: Path) -> None:
 
 
 def test_project_command_phase7_options(tmp_path: Path) -> None:
-    write(tmp_path / "reviewagent.yml", "rules:\n  max_parameters:\n    enabled: true\n    max_params: 1\n    severity: medium\n")
+    write(tmp_path / "magicreview.yml", "rules:\n  max_parameters:\n    enabled: true\n    max_params: 1\n    severity: medium\n")
     write(tmp_path / "bad.py", "API_KEY = 'hardcoded'\ndef run(a, b):\n    return a + b\n")
 
     json_result = run_cli("project", str(tmp_path), "--format", "json")
@@ -104,7 +104,7 @@ def test_project_command_phase7_options(tmp_path: Path) -> None:
     assert terminal_result.returncode == 0
     assert "Summary:" in terminal_result.stdout
 
-    config_result = run_cli("project", str(tmp_path), "--config", str(tmp_path / "reviewagent.yml"), "--format", "json")
+    config_result = run_cli("project", str(tmp_path), "--config", str(tmp_path / "magicreview.yml"), "--format", "json")
     assert any(issue["type"] == "EnterpriseMaxParameters" for issue in json.loads(config_result.stdout)["issues"])
 
     no_enterprise_result = run_cli("project", str(tmp_path), "--no-enterprise", "--format", "json")

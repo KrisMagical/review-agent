@@ -1,9 +1,21 @@
 # Changelog
 
-All notable changes to ReviewAgent will be documented in this file.
+All notable changes to MagicReview will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project uses semantic versioning while it is prepared for public release.
+
+## [Unreleased]
+
+## [0.1.1] - 2026-06-11
+
+### Changed
+
+- Renamed the project from ReviewAgent to MagicReview.
+- Replaced old CLI/package naming with `magicreview` and `mgreview`.
+- Added the new primary CLI command `mgreview`.
+- Updated environment variable prefix to `MGREVIEW_`.
+- Updated default data directory to `.magicreview`.
 
 ## [0.1.0] - 2026-06-09
 
@@ -24,3 +36,6 @@ and this project uses semantic versioning while it is prepared for public releas
 - Local-first default.
 - LLM disabled by default.
 - Explicit network authorization policy.
+
+
+

@@ -15,13 +15,13 @@ provider. It is therefore disabled unless explicitly requested.
 ## Enable from CLI
 
 ```bash
-python -m reviewagent.cli.main project examples/architecture_bad_project --llm
+python -m magicreview.cli.main project examples/architecture_bad_project --llm
 ```
 
 Use the mock provider for local dry runs:
 
 ```bash
-python -m reviewagent.cli.main project examples/architecture_bad_project --llm --llm-provider mock
+python -m magicreview.cli.main project examples/architecture_bad_project --llm --llm-provider mock
 ```
 
 ## MCP
@@ -41,8 +41,8 @@ python -m reviewagent.cli.main project examples/architecture_bad_project --llm -
 Environment variables:
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=none|mock|openai
-REVIEWAGENT_LLM_MODEL=gpt-4o-mini
+MGREVIEW_LLM_PROVIDER=none|mock|openai
+MGREVIEW_LLM_MODEL=gpt-4o-mini
 OPENAI_API_KEY=...
 ```
 
@@ -77,10 +77,10 @@ Architecture review returns the same Issue JSON shape:
 - Multi-agent collaboration belongs to Phase 6.
 ## Network Policy
 
-ReviewAgent remains offline by default. `--llm` enables the architecture review stage, but real network providers such as OpenAI or Anthropic also require explicit network authorization:
+MagicReview remains offline by default. `--llm` enables the architecture review stage, but real network providers such as OpenAI or Anthropic also require explicit network authorization:
 
 ```bash
-review project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
+mgreview project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
 ```
 
 The mock provider does not require network authorization.

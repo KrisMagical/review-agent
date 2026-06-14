@@ -1,10 +1,10 @@
 # Release Guide
 
-ReviewAgent releases are distributed through GitHub Releases first. PyPI publishing is prepared but not enabled by default.
+MagicReview releases are distributed through GitHub Releases first. PyPI publishing is prepared but not enabled by default.
 
 ## Versioning
 
-ReviewAgent uses semantic versioning while preparing for public releases.
+MagicReview uses semantic versioning while preparing for public releases.
 
 - Patch: bug fixes and packaging-only updates.
 - Minor: compatible feature additions.
@@ -13,7 +13,7 @@ ReviewAgent uses semantic versioning while preparing for public releases.
 The current version is defined in:
 
 - `pyproject.toml`
-- `reviewagent/_version.py`
+- `magicreview/_version.py`
 
 Both values must match before tagging a release.
 
@@ -34,8 +34,8 @@ Use the Keep a Changelog sections:
 python -m pip install --upgrade pip
 python -m pip install -e ".[all,dev]"
 pytest --basetemp=.pytest_tmp
-review --help
-review --version
+mgreview --help
+mgreview --version
 python -m build
 twine check dist/*
 ```
@@ -58,7 +58,7 @@ The script covers tests, core CLI smoke commands, package build, `twine check`,
 and optionally Docker build/run plus `docker compose config`. It uses
 `python -m build --no-isolation`, so run `pip install -e ".[all,dev]"` first.
 
-The quality gate keeps ReviewAgent offline by default. Do not set real LLM or
+The quality gate keeps MagicReview offline by default. Do not set real LLM or
 GitHub credentials for normal release validation.
 
 ## CI Quality Gates
@@ -66,7 +66,7 @@ GitHub credentials for normal release validation.
 GitHub Actions workflows:
 
 - `test.yml`: installs `.[all,dev]`, runs pytest, and smoke-tests CLI commands.
-- `lint.yml`: runs `ruff check reviewagent tests`.
+- `lint.yml`: runs `ruff check magicreview tests`.
 - `package.yml`: builds wheel/sdist, runs `twine check`, installs the wheel, and smoke-tests console scripts.
 - `docker.yml`: builds the Docker image, smoke-tests CLI commands in the image, and validates Compose config.
 - `release.yml`: runs tests, builds distributions, checks artifacts, and creates a GitHub Release on `v*` tags.
@@ -74,10 +74,10 @@ GitHub Actions workflows:
 CI sets offline defaults:
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=none
-REVIEWAGENT_NETWORK_ENABLED=false
-REVIEWAGENT_ALLOW_LLM=false
-REVIEWAGENT_CODE_SHARING_MODE=none
+MGREVIEW_LLM_PROVIDER=none
+MGREVIEW_NETWORK_ENABLED=false
+MGREVIEW_ALLOW_LLM=false
+MGREVIEW_CODE_SHARING_MODE=none
 ```
 
 CI does not require OpenAI, Anthropic, GitHub App, or webhook secrets.
@@ -127,14 +127,14 @@ No workflow publishes to PyPI by default in Phase 11.8.
 Phase 11.2 adds Docker packaging. Before tagging a release, verify:
 
 ```bash
-docker build -t reviewagent .
-docker run --rm reviewagent review --help
-docker run --rm reviewagent review --version
+docker build -t magicreview .
+docker run --rm magicreview mgreview --help
+docker run --rm magicreview mgreview --version
 docker compose config
 ```
 
 The Docker image defaults to offline operation. It should not include `.env`,
-`.reviewagent`, local databases, API keys, or GitHub private keys.
+`.magicreview`, local databases, API keys, or GitHub private keys.
 
 ## Rollback
 
@@ -150,14 +150,18 @@ Avoid rewriting public tags unless the release was never consumed.
 ## Pre-Release Checklist
 
 - `pytest --basetemp=.pytest_tmp`
-- `review --help`
-- `review --version`
-- `review project examples/multi_agent_project --agents --format json`
+- `mgreview --help`
+- `mgreview --version`
+- `mgreview project examples/multi_agent_project --agents --format json`
 - `python -m build`
 - `twine check dist/*`
-- `docker build -t reviewagent .`
+- `docker build -t magicreview .`
 - `docker compose config`
 - `CHANGELOG.md` updated
 - `pyproject.toml` version updated
-- `reviewagent/_version.py` version updated
+- `magicreview/_version.py` version updated
 - Git tag pushed
+
+
+
+

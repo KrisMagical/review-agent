@@ -1,4 +1,4 @@
-"""Launch ReviewAgent as an MCP stdio server.
+"""Launch magicreview as an MCP stdio server.
 
 Local Claude Desktop configuration example:
 
@@ -22,7 +22,7 @@ from mcp_server.server import run_stdio_server
 
 
 def main() -> None:
-    """Start the ReviewAgent MCP stdio server."""
+    """Start the magicreview MCP stdio server."""
 
     asyncio.run(run_stdio_server())
 

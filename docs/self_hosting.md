@@ -1,6 +1,6 @@
 # Self Hosting
 
-ReviewAgent can be self-hosted on a single server, internal VM, private network, or Docker host.
+MagicReview can be self-hosted on a single server, internal VM, private network, or Docker host.
 
 ## Self-Hosting Overview
 
@@ -8,7 +8,7 @@ Recommended model:
 
 - Dashboard runs privately on port `8080`
 - GitHub App webhook server runs on port `8000`
-- SQLite is stored in `.reviewagent` or `/data`
+- SQLite is stored in `.magicreview` or `/data`
 - Auth is enabled for Dashboard
 - GitHub webhook signature is enabled for GitHub App
 - LLM providers are disabled unless explicitly approved
@@ -19,8 +19,8 @@ Recommended model:
 git clone https://github.com/KrisMagical/review-agent.git
 cd review-agent
 pip install -e ".[all]"
-review dashboard init-db
-review dashboard serve --host 127.0.0.1 --port 8080
+mgreview dashboard init-db
+mgreview dashboard serve --host 127.0.0.1 --port 8080
 ```
 
 Use a reverse proxy for HTTPS and public/private access.
@@ -97,7 +97,7 @@ Caddy can manage HTTPS automatically.
 Set:
 
 ```bash
-REVIEWAGENT_COOKIE_SECURE=true
+MGREVIEW_COOKIE_SECURE=true
 ```
 
 only when the Dashboard is served over HTTPS.
@@ -107,18 +107,18 @@ only when the Dashboard is served over HTTPS.
 Back up:
 
 ```text
-.reviewagent/reviewagent.db
+.magicreview/magicreview.db
 ```
 
 or Docker path:
 
 ```text
-/data/reviewagent.db
+/data/magicreview.db
 ```
 
 Stop the service or use SQLite-safe backup tooling before copying a busy DB.
 
-## Updating ReviewAgent
+## Updating MagicReview
 
 From source:
 
@@ -131,7 +131,7 @@ pytest --basetemp=.pytest_tmp
 Docker:
 
 ```bash
-docker build -t reviewagent .
+docker build -t magicreview .
 docker compose up -d
 ```
 
@@ -139,9 +139,9 @@ Back up SQLite before upgrades.
 
 ## Security Checklist
 
-- `REVIEWAGENT_AUTH_ENABLED=true`
+- `MGREVIEW_AUTH_ENABLED=true`
 - strong admin password
-- random `REVIEWAGENT_SESSION_SECRET`
+- random `MGREVIEW_SESSION_SECRET`
 - Bearer API token configured
 - HTTPS or private network
 - `.env` outside Git
@@ -158,3 +158,6 @@ Back up SQLite before upgrades.
 - No background queue.
 - No automatic code modification.
 - Dashboard is appropriate for personal, team-internal, and controlled-server use.
+
+
+

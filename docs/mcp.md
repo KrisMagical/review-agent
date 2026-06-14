@@ -1,36 +1,36 @@
 # MCP Server
 
-ReviewAgent exposes local review tools through an MCP stdio server.
+MagicReview exposes local review tools through an MCP stdio server.
 
 ## MCP stdio Server
 
 Start:
 
 ```bash
-reviewagent-mcp
+mgreview-mcp
 ```
 
 Alternative:
 
 ```bash
-python -m reviewagent.mcp_server.server
+python -m magicreview.mcp_server.server
 ```
 
 MCP uses stdio. It does not start an HTTP server.
 
 ## Local Usage
 
-Use MCP when you want an AI coding tool to call ReviewAgent locally against files, diffs, or projects.
+Use MCP when you want an AI coding tool to call MagicReview locally against files, diffs, or projects.
 
-ReviewAgent remains offline by default. Optional LLM/network behavior requires explicit arguments.
+MagicReview remains offline by default. Optional LLM/network behavior requires explicit arguments.
 
 ## Cursor Config
 
 ```json
 {
   "mcpServers": {
-    "reviewagent": {
-      "command": "reviewagent-mcp"
+    "MagicReview": {
+      "command": "mgreview-mcp"
     }
   }
 }
@@ -41,9 +41,9 @@ Source checkout alternative:
 ```json
 {
   "mcpServers": {
-    "reviewagent": {
+    "MagicReview": {
       "command": "python",
-      "args": ["-m", "reviewagent.mcp_server.server"],
+      "args": ["-m", "magicreview.mcp_server.server"],
       "cwd": "/path/to/review-agent"
     }
   }
@@ -55,8 +55,8 @@ Source checkout alternative:
 ```json
 {
   "mcpServers": {
-    "reviewagent": {
-      "command": "reviewagent-mcp"
+    "MagicReview": {
+      "command": "mgreview-mcp"
     }
   }
 }
@@ -156,7 +156,7 @@ Selected agents:
 ```json
 {
   "path": "examples/enterprise_policy_project",
-  "config_path": "examples/enterprise_policy_project/reviewagent.yml",
+  "config_path": "examples/enterprise_policy_project/magicreview.yml",
   "enable_enterprise_rules": true
 }
 ```
@@ -188,7 +188,7 @@ MCP does not call real LLM providers by default. It never modifies reviewed sour
 ## Docker MCP Note
 
 ```bash
-docker run --rm -i reviewagent reviewagent-mcp
+docker run --rm -i magicreview mgreview-mcp
 ```
 
 Docker MCP is suitable for advanced local integrations where stdio can be connected to the tool.
@@ -196,7 +196,11 @@ Docker MCP is suitable for advanced local integrations where stdio can be connec
 ## Troubleshooting
 
 - Missing dependency: install `pip install -e ".[mcp]"` or `".[all]"`.
-- Large projects: ReviewAgent returns safe issue JSON instead of crashing.
+- Large projects: MagicReview returns safe issue JSON instead of crashing.
 - Real LLM blocked: provide `network_policy`.
 - MCP is not HTTP; configure tools for stdio.
 - Remote/hosted MCP is a future or advanced deployment pattern.
+
+
+
+

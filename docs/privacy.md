@@ -1,10 +1,10 @@
 # Privacy
 
-ReviewAgent is local-first and offline by default.
+MagicReview is local-first and offline by default.
 
 ## Local-First Privacy Model
 
-By default, ReviewAgent:
+By default, MagicReview:
 
 - reviews files, diffs, and projects locally
 - does not upload source code
@@ -17,9 +17,9 @@ By default, ReviewAgent:
 
 Offline by default:
 
-- `review file`
-- `review diff`
-- `review project`
+- `mgreview file`
+- `mgreview diff`
+- `mgreview project`
 - enterprise rules
 - FastAPI rules
 - multi-agent static checks
@@ -44,7 +44,7 @@ LLM review sends bounded prompts to the configured provider only when explicitly
 CLI example:
 
 ```bash
-review project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
+mgreview project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
 ```
 
 `--llm` alone is not network consent.
@@ -72,7 +72,7 @@ GitHub App modes:
 Current MCP is stdio and local by default:
 
 ```bash
-reviewagent-mcp
+mgreview-mcp
 ```
 
 It does not start HTTP and does not call remote services unless optional LLM/network policy settings are explicitly provided.
@@ -92,7 +92,7 @@ Dashboard stores:
 SQLite defaults to:
 
 ```text
-.reviewagent/reviewagent.db
+.magicreview/magicreview.db
 ```
 
 ## Network Audit
@@ -111,7 +111,7 @@ They do not include full prompts, source code, API keys, private keys, or tokens
 
 ## What Is Never Stored
 
-ReviewAgent should not store:
+MagicReview should not store:
 
 - GitHub installation tokens
 - GitHub private keys
@@ -124,7 +124,7 @@ Model API keys stored in SQLite are masked in UI/API output but are not encrypte
 
 ## What Is Never Sent By Default
 
-By default, ReviewAgent sends nothing to:
+By default, MagicReview sends nothing to:
 
 - OpenAI
 - Anthropic
@@ -135,8 +135,8 @@ By default, ReviewAgent sends nothing to:
 
 ## Recommended Settings For Sensitive Code
 
-- Keep `REVIEWAGENT_LLM_PROVIDER=none`.
-- Keep `REVIEWAGENT_NETWORK_ENABLED=false`.
+- Keep `MGREVIEW_LLM_PROVIDER=none`.
+- Keep `MGREVIEW_NETWORK_ENABLED=false`.
 - Use local CLI or Dashboard only.
 - If LLM is approved, use `summary_only`.
 - Prefer local Ollama or an enterprise gateway for regulated code.
@@ -149,3 +149,6 @@ By default, ReviewAgent sends nothing to:
 - No RBAC or SSO.
 - Hosted reviews run synchronously.
 - GitHub `full_project` is limited to selected file types and repository size limits.
+
+
+

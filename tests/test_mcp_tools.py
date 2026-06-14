@@ -1,7 +1,7 @@
 import json
 
 from app.reviewer import ReviewService
-from reviewagent.mcp_server import tools
+from magicreview.mcp_server import tools
 
 
 class FakeService:

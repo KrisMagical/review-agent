@@ -1,4 +1,4 @@
-"""ReviewAgent MCP server over stdio.
+"""magicreview MCP server over stdio.
 
 The preferred runtime uses the official ``mcp`` Python SDK. When the SDK is
 not installed, this module falls back to a compact JSON-RPC stdio loop that is
@@ -62,7 +62,7 @@ def create_server() -> Any:
 
 
 async def run_stdio_server() -> None:
-    """Run the ReviewAgent MCP server over stdio."""
+    """Run the magicreview MCP server over stdio."""
 
     _configure_logging()
     server = create_server()

@@ -4,11 +4,11 @@ import sys
 from pathlib import Path
 
 from app.reviewer import ReviewService
-from reviewagent.mcp_server import tools
+from magicreview.mcp_server import tools
 
 
 def write_policy_project(root: Path) -> Path:
-    config = root / "reviewagent.yml"
+    config = root / "magicreview.yml"
     config.write_text(
         """
 rules:
@@ -64,13 +64,13 @@ def test_review_file_supports_explicit_config(tmp_path: Path) -> None:
 def test_cli_project_config_and_no_enterprise(tmp_path: Path) -> None:
     config = write_policy_project(tmp_path)
     enabled = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "project", str(tmp_path), "--config", str(config)],
+        [sys.executable, "-m", "magicreview.cli.main", "project", str(tmp_path), "--config", str(config)],
         check=True,
         capture_output=True,
         text=True,
     )
     disabled = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "project", str(tmp_path), "--no-enterprise"],
+        [sys.executable, "-m", "magicreview.cli.main", "project", str(tmp_path), "--no-enterprise"],
         check=True,
         capture_output=True,
         text=True,

@@ -2,7 +2,7 @@ import importlib
 
 
 def test_mcp_server_module_imports_and_exposes_app_and_main() -> None:
-    server = importlib.import_module("reviewagent.mcp_server.server")
+    server = importlib.import_module("magicreview.mcp_server.server")
 
     assert hasattr(server, "mcp")
     assert callable(server.main)

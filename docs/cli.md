@@ -1,58 +1,58 @@
 # CLI
 
-The `review` CLI is the quickest way to use ReviewAgent locally. It calls the same ReviewService used by MCP, GitHub App, Dashboard, enterprise rules, LLM review, and multi-agent review.
+The `mgreview` CLI is the quickest way to use MagicReview locally. It calls the same ReviewService used by MCP, GitHub App, Dashboard, enterprise rules, LLM review, and multi-agent review.
 
 ## Install
 
 ```bash
 pip install -e ".[all]"
-review --help
-review --version
+mgreview --help
+mgreview --version
 ```
 
 Run without console scripts:
 
 ```bash
-python -m reviewagent.cli.main --help
+python -m magicreview.cli.main --help
 ```
 
-## Review File
+## mgreview file
 
 ```bash
-review file examples/bad_code.py
-review file examples/bad_code.py --format terminal
-review file examples/bad_code.py --format json --fail-on high
-review file examples/bad_code.py --config reviewagent.yml
-review file examples/bad_code.py --save
+mgreview file examples/bad_code.py
+mgreview file examples/bad_code.py --format terminal
+mgreview file examples/bad_code.py --format json --fail-on high
+mgreview file examples/bad_code.py --config magicreview.yml
+mgreview file examples/bad_code.py --save
 ```
 
 `--config` enables explicit enterprise YAML/JSON rules for the file review path when supported by the rule.
 
-## Review Diff
+## mgreview diff
 
-`review diff` reads unified diff text from stdin by default:
+`mgreview diff` reads unified diff text from stdin by default:
 
 ```bash
-git diff | review diff --format terminal
-cat examples/sample.diff | review diff --format json
+git diff | mgreview diff --format terminal
+cat examples/sample.diff | mgreview diff --format json
 ```
 
 Read a patch file:
 
 ```bash
-review diff --file examples/sample.diff --format markdown --output diff-review.md
-review diff --file examples/sample.diff --save
+mgreview diff --file examples/sample.diff --format markdown --output diff-review.md
+mgreview diff --file examples/sample.diff --save
 ```
 
-## Review Project
+## mgreview project
 
 ```bash
-review project .
-review project . --format terminal
-review project examples/phase2_bad_project --format markdown --output review.md
-review project examples/enterprise_policy_project --config examples/enterprise_policy_project/reviewagent.yml
-review project examples/multi_agent_project --agents
-review project examples/multi_agent_project --agents quality,security
+mgreview project .
+mgreview project . --format terminal
+mgreview project examples/phase2_bad_project --format markdown --output review.md
+mgreview project examples/enterprise_policy_project --config examples/enterprise_policy_project/magicreview.yml
+mgreview project examples/multi_agent_project --agents
+mgreview project examples/multi_agent_project --agents quality,security
 ```
 
 ## Output Formats
@@ -69,15 +69,15 @@ JSON is the default for automation and includes `issues` plus `summary`.
 Write a report file:
 
 ```bash
-review project . --format html --output review.html
-review diff --file changes.patch --format markdown --output review.md
+mgreview project . --format html --output review.html
+mgreview diff --file changes.patch --format markdown --output review.md
 ```
 
 ## Filtering And Limits
 
 ```bash
-review project . --severity high
-review project . --max-issues 50
+mgreview project . --severity high
+mgreview project . --max-issues 50
 ```
 
 `--severity high` shows only `high` and `critical` issues.
@@ -87,27 +87,27 @@ review project . --max-issues 50
 Saving is opt-in:
 
 ```bash
-review project . --save
-review file app/main.py --save
-review diff --file changes.patch --save
+mgreview project . --save
+mgreview file app/main.py --save
+mgreview diff --file changes.patch --save
 ```
 
-Saved results go to SQLite at `REVIEWAGENT_DB_PATH` or `.reviewagent/reviewagent.db`.
+Saved results go to SQLite at `MGREVIEW_DB_PATH` or `.magicreview/magicreview.db`.
 
 ## Enterprise Rules
 
 ```bash
-review project . --config reviewagent.yml
-review project . --no-enterprise
+mgreview project . --config magicreview.yml
+mgreview project . --no-enterprise
 ```
 
-Project review automatically searches for ReviewAgent config files unless `--no-enterprise` is set.
+Project review automatically searches for MagicReview config files unless `--no-enterprise` is set.
 
 ## Multi-Agent Review
 
 ```bash
-review project . --agents
-review project . --agents quality,bug,security
+mgreview project . --agents
+mgreview project . --agents quality,bug,security
 ```
 
 Agents run synchronously and do not modify source files.
@@ -117,14 +117,14 @@ Agents run synchronously and do not modify source files.
 Mock provider is offline:
 
 ```bash
-review project . --llm --llm-provider mock
+mgreview project . --llm --llm-provider mock
 ```
 
 Real providers require explicit network authorization:
 
 ```bash
-review project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
-review project . --llm --llm-provider anthropic --allow-network --allow-llm --code-sharing summary-only
+mgreview project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
+mgreview project . --llm --llm-provider anthropic --allow-network --allow-llm --code-sharing summary-only
 ```
 
 `--llm` alone is not permission to call external providers.
@@ -145,22 +145,22 @@ The CLI converts `summary-only` to the internal `summary_only` NetworkPolicy val
 ## Dashboard Commands
 
 ```bash
-review dashboard init-db
-review dashboard serve --host 127.0.0.1 --port 8080
+mgreview dashboard init-db
+mgreview dashboard serve --host 127.0.0.1 --port 8080
 ```
 
 The Dashboard can also be started with:
 
 ```bash
-reviewagent-dashboard
-python -m reviewagent.dashboard.app
+mgreview-dashboard
+python -m magicreview.dashboard.app
 ```
 
 ## Version
 
 ```bash
-review --version
-reviewagent --version
+mgreview --version
+mgreview --version
 ```
 
 ## Exit Codes
@@ -172,7 +172,7 @@ reviewagent --version
 Example:
 
 ```bash
-review project . --fail-on high
+mgreview project . --fail-on high
 ```
 
 ## Troubleshooting
@@ -182,3 +182,7 @@ review project . --fail-on high
 - Unknown agent: returned as an `UnknownAgent` issue.
 - Output path cannot be written: exits with code `2`.
 - Use `--debug` to print tracebacks to stderr. JSON stdout remains clean.
+
+
+
+

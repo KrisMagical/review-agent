@@ -9,13 +9,13 @@ import pytest
 
 from app.llm.provider import AnthropicLLMProvider, LLMProviderError, OpenAILLMProvider
 from app.reviewer import ReviewService
-from reviewagent.connected import NetworkPolicy
-from reviewagent.dashboard import app as dashboard_app_module
-from reviewagent.integrations.github.config import GitHubAppConfig
-from reviewagent.integrations.github.models import PullRequestEvent
-from reviewagent.integrations.github.reviewer import GitHubPullRequestReviewer
-from reviewagent.mcp_server import tools
-from reviewagent.storage import ReviewPersistenceService
+from magicreview.connected import NetworkPolicy
+from magicreview.dashboard import app as dashboard_app_module
+from magicreview.integrations.github.config import GitHubAppConfig
+from magicreview.integrations.github.models import PullRequestEvent
+from magicreview.integrations.github.reviewer import GitHubPullRequestReviewer
+from magicreview.mcp_server import tools
+from magicreview.storage import ReviewPersistenceService
 
 
 def test_network_policy_defaults_deny_everything() -> None:
@@ -57,7 +57,7 @@ def test_anthropic_provider_unauthed_and_authorized_mock(monkeypatch: pytest.Mon
 
 
 def test_mock_provider_runs_offline_and_real_provider_returns_safe_issue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(tmp_path / "audit.db"))
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(tmp_path / "audit.db"))
     (tmp_path / "app.py").write_text("def run():\n    return 1\n", encoding="utf-8")
 
     mock_result = ReviewService().review_project(str(tmp_path), enable_llm=True, llm_provider="mock")
@@ -75,10 +75,10 @@ def test_cli_llm_openai_requires_explicit_network_authorization(tmp_path: Path) 
     project = tmp_path / "project"
     project.mkdir()
     (project / "app.py").write_text("def run():\n    return 1\n", encoding="utf-8")
-    env = {**os.environ, "REVIEWAGENT_DB_PATH": str(tmp_path / "audit.db")}
+    env = {**os.environ, "MGREVIEW_DB_PATH": str(tmp_path / "audit.db")}
 
     result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "project", str(project), "--llm", "--llm-provider", "openai", "--format", "json"],
+        [sys.executable, "-m", "magicreview.cli.main", "project", str(project), "--llm", "--llm-provider", "openai", "--format", "json"],
         capture_output=True,
         text=True,
         check=True,
@@ -91,7 +91,7 @@ def test_cli_llm_openai_requires_explicit_network_authorization(tmp_path: Path) 
         [
             sys.executable,
             "-m",
-            "reviewagent.cli.main",
+            "magicreview.cli.main",
             "project",
             str(project),
             "--llm",
@@ -175,7 +175,7 @@ def test_github_diff_only_default_and_full_project_mode() -> None:
 
 def test_dashboard_network_audit_api_and_no_secret_storage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     db_path = tmp_path / "audit.db"
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(db_path))
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(db_path))
     service = ReviewPersistenceService(db_path)
     audit_id = service.save_network_audit(
         source="cli",

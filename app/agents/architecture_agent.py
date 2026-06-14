@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from app.agents.base import ReviewAgent
+from app.agents.base import BaseAgent
 from app.agents.context import AgentContext, AgentResult
 from app.agents.utils import dedupe_and_sort
 from app.analyzers.dependency_analyzer import DependencyAnalyzer
@@ -12,7 +12,7 @@ from app.llm.provider import provider_from_env
 from app.rules.architecture import GodObjectDetector
 
 
-class ArchitectureAgent(ReviewAgent):
+class ArchitectureAgent(BaseAgent):
     """Run import graph, God Object, FastAPI architecture, and optional LLM review."""
 
     name = "architecture"

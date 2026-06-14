@@ -3,7 +3,7 @@ FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
-    REVIEWAGENT_DB_PATH=/data/reviewagent.db
+    MGREVIEW_DB_PATH=/data/magicreview.db
 
 WORKDIR /app
 
@@ -14,20 +14,20 @@ RUN apt-get update \
 COPY pyproject.toml README.md LICENSE CHANGELOG.md MANIFEST.in ./
 COPY app ./app
 COPY mcp_server ./mcp_server
-COPY reviewagent ./reviewagent
+COPY magicreview ./magicreview
 COPY docs ./docs
 COPY examples ./examples
 
 RUN python -m pip install --upgrade pip \
     && python -m pip install ".[all]"
 
-RUN useradd --create-home --shell /bin/sh reviewagent \
+RUN useradd --create-home --shell /bin/sh magicreview \
     && mkdir -p /data \
-    && chown -R reviewagent:reviewagent /data /app
+    && chown -R magicreview:magicreview /data /app
 
-USER reviewagent
+USER magicreview
 
 VOLUME ["/data"]
 EXPOSE 8080 8000
 
-CMD ["review", "--help"]
+CMD ["mgreview", "--help"]

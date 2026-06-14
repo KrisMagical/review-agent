@@ -35,5 +35,5 @@ jobs:
 
       - name: Smoke test installed package
         run: |
-          review --help
-          review --version
+          mgreview --help
+          mgreview --version

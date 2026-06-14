@@ -1,21 +1,21 @@
 # Docker
 
-ReviewAgent includes a Dockerfile and Docker Compose setup for local and self-hosted use.
+MagicReview includes a Dockerfile and Docker Compose setup for local and self-hosted use.
 
 ## Build Image
 
 ```bash
-docker build -t reviewagent .
+docker build -t magicreview .
 ```
 
-The image uses Python 3.12 slim, installs ReviewAgent with runtime extras, creates a non-root user, and uses `/data` for SQLite persistence.
+The image uses Python 3.12 slim, installs MagicReview with runtime extras, creates a non-root user, and uses `/data` for SQLite persistence.
 
 ## Run CLI In Docker
 
 ```bash
-docker run --rm reviewagent review --help
-docker run --rm reviewagent review --version
-docker run --rm reviewagent python -m reviewagent.cli.main --help
+docker run --rm magicreview mgreview --help
+docker run --rm magicreview mgreview --version
+docker run --rm magicreview python -m magicreview.cli.main --help
 ```
 
 ## Review Local Project With Volume Mount
@@ -23,13 +23,13 @@ docker run --rm reviewagent python -m reviewagent.cli.main --help
 Windows PowerShell:
 
 ```powershell
-docker run --rm -v "${PWD}:/workspace" reviewagent review project /workspace --format json
+docker run --rm -v "${PWD}:/workspace" magicreview mgreview project /workspace --format json
 ```
 
 Linux/macOS:
 
 ```bash
-docker run --rm -v "$PWD:/workspace" reviewagent review project /workspace --format json
+docker run --rm -v "$PWD:/workspace" magicreview mgreview project /workspace --format json
 ```
 
 The container reads the mounted project. It does not execute reviewed code.
@@ -37,13 +37,13 @@ The container reads the mounted project. It does not execute reviewed code.
 ## Run Dashboard
 
 ```bash
-docker run --rm -p 8080:8080 -v "$PWD/.reviewagent:/data" reviewagent reviewagent-dashboard
+docker run --rm -p 8080:8080 -v "$PWD/.magicreview:/data" magicreview mgreview-dashboard
 ```
 
 Or:
 
 ```bash
-docker run --rm -p 8080:8080 -v "$PWD/.reviewagent:/data" reviewagent review dashboard serve --host 0.0.0.0 --port 8080
+docker run --rm -p 8080:8080 -v "$PWD/.magicreview:/data" magicreview mgreview dashboard serve --host 0.0.0.0 --port 8080
 ```
 
 Open:
@@ -55,7 +55,7 @@ http://127.0.0.1:8080
 ## Run GitHub App
 
 ```bash
-docker run --rm -p 8000:8000 --env-file .env -v "$PWD/.reviewagent:/data" reviewagent reviewagent-github-app
+docker run --rm -p 8000:8000 --env-file .env -v "$PWD/.magicreview:/data" magicreview mgreview-github-app
 ```
 
 Open:
@@ -69,7 +69,7 @@ Webhook review requires GitHub App credentials in `.env`.
 ## Run MCP In Docker
 
 ```bash
-docker run --rm -i reviewagent reviewagent-mcp
+docker run --rm -i magicreview mgreview-mcp
 ```
 
 MCP uses stdio. Docker MCP is mainly for advanced local integration.
@@ -93,10 +93,10 @@ Services:
 
 Compose mounts:
 
-- `./.reviewagent:/data` for SQLite
+- `./.magicreview:/data` for SQLite
 - `./:/workspace:ro` for hosted project review
 
-The `.reviewagent` directory contains local Dashboard data and should be backed up if you rely on historical reports.
+The `.magicreview` directory contains local Dashboard data and should be backed up if you rely on historical reports.
 
 ## .env Configuration
 
@@ -148,24 +148,24 @@ Docker defaults are offline:
 To use a real provider, configure API keys and explicit policy:
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=openai
+MGREVIEW_LLM_PROVIDER=openai
 OPENAI_API_KEY=...
-REVIEWAGENT_NETWORK_ENABLED=true
-REVIEWAGENT_ALLOW_LLM=true
-REVIEWAGENT_CODE_SHARING_MODE=summary_only
+MGREVIEW_NETWORK_ENABLED=true
+MGREVIEW_ALLOW_LLM=true
+MGREVIEW_CODE_SHARING_MODE=summary_only
 ```
 
 CLI real-provider example:
 
 ```bash
-review project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
+mgreview project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
 ```
 
 ## GitHub Review Modes
 
 ```bash
-REVIEWAGENT_GITHUB_REVIEW_MODE=diff_only
-REVIEWAGENT_GITHUB_REVIEW_MODE=full_project
+MGREVIEW_GITHUB_REVIEW_MODE=diff_only
+MGREVIEW_GITHUB_REVIEW_MODE=full_project
 ```
 
 `full_project` fetches Python/config/limited metadata files for the PR head commit using GitHub Trees/Blob APIs. It is not a full repository mirror and skips secret-like files.
@@ -181,12 +181,16 @@ docker pull python:3.12-slim
 or configure your Docker registry mirror. Then rebuild:
 
 ```bash
-docker build -t reviewagent .
+docker build -t magicreview .
 ```
 
 ## Security Notes
 
 - `.env` is excluded from the image and should never be committed.
-- `.reviewagent` is excluded from the image and used as a local volume.
+- `.magicreview` is excluded from the image and used as a local volume.
 - Run Dashboard behind auth before server/public exposure.
 - Use HTTPS, VPN, Tailscale, WireGuard, or Cloudflare Tunnel for remote access.
+
+
+
+

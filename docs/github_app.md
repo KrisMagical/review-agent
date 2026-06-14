@@ -1,16 +1,16 @@
 # GitHub App
 
-ReviewAgent can run as a GitHub App and review pull requests through webhooks.
+MagicReview can run as a GitHub App and review pull requests through webhooks.
 
 ## GitHub App Overview
 
 Flow:
 
 ```text
-Pull Request -> Webhook -> ReviewAgent GitHub App -> ReviewService -> PR comments / Dashboard
+Pull Request -> Webhook -> MagicReview GitHub App -> ReviewService -> PR comments / Dashboard
 ```
 
-ReviewAgent supports:
+MagicReview supports:
 
 - PR summary comment
 - inline comments for changed lines
@@ -61,28 +61,28 @@ The same webhook secret must be configured in GitHub and in `GITHUB_WEBHOOK_SECR
 GITHUB_APP_ID=12345
 GITHUB_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----..."
 GITHUB_WEBHOOK_SECRET="your-webhook-secret"
-GITHUB_APP_NAME=ReviewAgent
+GITHUB_APP_NAME=MagicReview
 
-REVIEWAGENT_GITHUB_ENABLE_INLINE_COMMENTS=true
-REVIEWAGENT_GITHUB_ENABLE_SUMMARY_COMMENT=true
-REVIEWAGENT_GITHUB_ENABLE_AGENTS=false
-REVIEWAGENT_GITHUB_ENABLE_LLM=false
-REVIEWAGENT_GITHUB_CONFIG_PATH=
-REVIEWAGENT_GITHUB_MAX_INLINE_COMMENTS=30
-REVIEWAGENT_GITHUB_FAIL_ON=high
-REVIEWAGENT_GITHUB_SAVE_RESULTS=true
-REVIEWAGENT_GITHUB_REVIEW_MODE=diff_only
+MGREVIEW_GITHUB_ENABLE_INLINE_COMMENTS=true
+MGREVIEW_GITHUB_ENABLE_SUMMARY_COMMENT=true
+MGREVIEW_GITHUB_ENABLE_AGENTS=false
+MGREVIEW_GITHUB_ENABLE_LLM=false
+MGREVIEW_GITHUB_CONFIG_PATH=
+MGREVIEW_GITHUB_MAX_INLINE_COMMENTS=30
+MGREVIEW_GITHUB_FAIL_ON=high
+MGREVIEW_GITHUB_SAVE_RESULTS=true
+MGREVIEW_GITHUB_REVIEW_MODE=diff_only
 
-REVIEWAGENT_GITHUB_MAX_PROJECT_FILES=2000
-REVIEWAGENT_GITHUB_MAX_FILE_BYTES=2097152
-REVIEWAGENT_GITHUB_MAX_PROJECT_BYTES=52428800
-REVIEWAGENT_GITHUB_FETCH_TIMEOUT_SECONDS=30
-REVIEWAGENT_GITHUB_ALLOW_NETWORK=false
-REVIEWAGENT_GITHUB_ALLOW_LLM=false
-REVIEWAGENT_GITHUB_CODE_SHARING_MODE=none
+MGREVIEW_GITHUB_MAX_PROJECT_FILES=2000
+MGREVIEW_GITHUB_MAX_FILE_BYTES=2097152
+MGREVIEW_GITHUB_MAX_PROJECT_BYTES=52428800
+MGREVIEW_GITHUB_FETCH_TIMEOUT_SECONDS=30
+MGREVIEW_GITHUB_ALLOW_NETWORK=false
+MGREVIEW_GITHUB_ALLOW_LLM=false
+MGREVIEW_GITHUB_CODE_SHARING_MODE=none
 
-REVIEWAGENT_GITHUB_HOST=0.0.0.0
-REVIEWAGENT_GITHUB_PORT=8000
+MGREVIEW_GITHUB_HOST=0.0.0.0
+MGREVIEW_GITHUB_PORT=8000
 ```
 
 Do not commit private keys or webhook secrets.
@@ -90,13 +90,13 @@ Do not commit private keys or webhook secrets.
 ## Start Server
 
 ```bash
-reviewagent-github-app
+mgreview-github-app
 ```
 
 Alternative:
 
 ```bash
-python -m reviewagent.integrations.github.app
+python -m magicreview.integrations.github.app
 ```
 
 Routes:
@@ -111,7 +111,7 @@ Routes:
 Default:
 
 ```bash
-REVIEWAGENT_GITHUB_REVIEW_MODE=diff_only
+MGREVIEW_GITHUB_REVIEW_MODE=diff_only
 ```
 
 Behavior:
@@ -128,7 +128,7 @@ This is fast and has limited project-level context.
 Optional:
 
 ```bash
-REVIEWAGENT_GITHUB_REVIEW_MODE=full_project
+MGREVIEW_GITHUB_REVIEW_MODE=full_project
 ```
 
 Behavior:
@@ -142,7 +142,7 @@ Behavior:
 Fetched file types:
 
 - `.py`
-- ReviewAgent config files
+- MagicReview config files
 - `pyproject.toml`
 - `README.md`
 
@@ -161,12 +161,12 @@ Skipped:
 
 Limits:
 
-- `REVIEWAGENT_GITHUB_MAX_PROJECT_FILES`
-- `REVIEWAGENT_GITHUB_MAX_FILE_BYTES`
-- `REVIEWAGENT_GITHUB_MAX_PROJECT_BYTES`
-- `REVIEWAGENT_GITHUB_FETCH_TIMEOUT_SECONDS`
+- `MGREVIEW_GITHUB_MAX_PROJECT_FILES`
+- `MGREVIEW_GITHUB_MAX_FILE_BYTES`
+- `MGREVIEW_GITHUB_MAX_PROJECT_BYTES`
+- `MGREVIEW_GITHUB_FETCH_TIMEOUT_SECONDS`
 
-If the Git tree is truncated, ReviewAgent returns a safe `GitHubProjectFetchError` instead of continuing with incomplete context.
+If the Git tree is truncated, MagicReview returns a safe `GitHubProjectFetchError` instead of continuing with incomplete context.
 
 ## GitHub App Installation Token
 
@@ -191,10 +191,10 @@ This is separate from GitHub App installation-token flow and is intended for use
 
 ## Summary Comments
 
-ReviewAgent upserts one summary comment with marker:
+MagicReview upserts one summary comment with marker:
 
 ```html
-<!-- reviewagent-summary -->
+<!-- MagicReview-summary -->
 ```
 
 The summary includes severity counts, top issues, and review mode.
@@ -206,21 +206,21 @@ Inline comments are created only for issues that map to changed PR lines.
 Marker:
 
 ```html
-<!-- reviewagent-inline:IssueType:path.py:20 -->
+<!-- MagicReview-inline:IssueType:path.py:20 -->
 ```
 
 This avoids repeated comments across pushes.
 
 ## Checks
 
-When configured, ReviewAgent can create a `ReviewAgent` check run. `REVIEWAGENT_GITHUB_FAIL_ON=high` marks the check as failed when high or critical issues exist.
+When configured, MagicReview can create a `MagicReview` check run. `MGREVIEW_GITHUB_FAIL_ON=high` marks the check as failed when high or critical issues exist.
 
 ## Dashboard Persistence
 
 Enable:
 
 ```bash
-REVIEWAGENT_GITHUB_SAVE_RESULTS=true
+MGREVIEW_GITHUB_SAVE_RESULTS=true
 ```
 
 Stored metadata is sanitized and may include:
@@ -248,12 +248,16 @@ Not stored:
 - LLM is disabled by default.
 - Dashboard auth is separate from GitHub webhook auth.
 - Do not put Dashboard login in front of `/webhook`.
-- Inline comments are capped by `REVIEWAGENT_GITHUB_MAX_INLINE_COMMENTS`.
+- Inline comments are capped by `MGREVIEW_GITHUB_MAX_INLINE_COMMENTS`.
 
 ## Troubleshooting
 
 - 401 webhook: check `GITHUB_WEBHOOK_SECRET`.
 - No comments: check repository permissions.
 - `GitHubProjectFetchError`: check repository size, tree truncation, and token permissions.
-- Missing Dashboard records: set `REVIEWAGENT_GITHUB_SAVE_RESULTS=true`.
-- LLM not running: confirm `REVIEWAGENT_GITHUB_ENABLE_LLM=true` and network policy.
+- Missing Dashboard records: set `MGREVIEW_GITHUB_SAVE_RESULTS=true`.
+- LLM not running: confirm `MGREVIEW_GITHUB_ENABLE_LLM=true` and network policy.
+
+
+
+

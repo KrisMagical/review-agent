@@ -15,13 +15,13 @@ When enabled, Dashboard pages require a session login and Dashboard API routes r
 ## Environment Variables
 
 ```bash
-REVIEWAGENT_AUTH_ENABLED=true
-REVIEWAGENT_ADMIN_USERNAME=admin
-REVIEWAGENT_ADMIN_PASSWORD=use-a-strong-password
-REVIEWAGENT_SESSION_SECRET=use-a-random-secret
-REVIEWAGENT_API_KEYS=token-one,token-two
-REVIEWAGENT_COOKIE_SECURE=false
-REVIEWAGENT_BASIC_AUTH_ENABLED=false
+MGREVIEW_AUTH_ENABLED=true
+MGREVIEW_ADMIN_USERNAME=admin
+MGREVIEW_ADMIN_PASSWORD=use-a-strong-password
+MGREVIEW_SESSION_SECRET=use-a-random-secret
+MGREVIEW_API_KEYS=token-one,token-two
+MGREVIEW_COOKIE_SECURE=false
+MGREVIEW_BASIC_AUTH_ENABLED=false
 ```
 
 Generate a secret:
@@ -30,12 +30,12 @@ Generate a secret:
 python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
 
-## REVIEWAGENT_AUTH_ENABLED
+## MGREVIEW_AUTH_ENABLED
 
 Default:
 
 ```bash
-REVIEWAGENT_AUTH_ENABLED=false
+MGREVIEW_AUTH_ENABLED=false
 ```
 
 Local development can keep auth disabled. Server deployments should set it to `true`.
@@ -58,8 +58,8 @@ The Dashboard uses a signed session cookie.
 
 Important settings:
 
-- `REVIEWAGENT_SESSION_SECRET`: required for stable sessions
-- `REVIEWAGENT_COOKIE_SECURE`: set `true` when served over HTTPS
+- `MGREVIEW_SESSION_SECRET`: required for stable sessions
+- `MGREVIEW_COOKIE_SECURE`: set `true` when served over HTTPS
 
 Cookie behavior:
 
@@ -72,7 +72,7 @@ Cookie behavior:
 Configure one or more keys:
 
 ```bash
-REVIEWAGENT_API_KEYS=dev-token,automation-token
+MGREVIEW_API_KEYS=dev-token,automation-token
 ```
 
 Call API routes:
@@ -92,7 +92,7 @@ Invalid or missing tokens return:
 Optional:
 
 ```bash
-REVIEWAGENT_BASIC_AUTH_ENABLED=true
+MGREVIEW_BASIC_AUTH_ENABLED=true
 ```
 
 Basic Auth uses the same admin username/password. It is useful for simple deployments, but session login and Bearer tokens are preferred.
@@ -102,16 +102,16 @@ Basic Auth uses the same admin username/password. It is useful for simple deploy
 Local:
 
 ```bash
-REVIEWAGENT_AUTH_ENABLED=false
-review dashboard serve --host 127.0.0.1 --port 8080
+MGREVIEW_AUTH_ENABLED=false
+mgreview dashboard serve --host 127.0.0.1 --port 8080
 ```
 
 Server:
 
 ```bash
-REVIEWAGENT_AUTH_ENABLED=true
-REVIEWAGENT_COOKIE_SECURE=true
-review dashboard serve --host 0.0.0.0 --port 8080
+MGREVIEW_AUTH_ENABLED=true
+MGREVIEW_COOKIE_SECURE=true
+mgreview dashboard serve --host 0.0.0.0 --port 8080
 ```
 
 Use HTTPS before setting secure cookies.
@@ -125,11 +125,11 @@ cp .env.example .env
 Edit `.env`:
 
 ```bash
-REVIEWAGENT_AUTH_ENABLED=true
-REVIEWAGENT_ADMIN_USERNAME=admin
-REVIEWAGENT_ADMIN_PASSWORD=...
-REVIEWAGENT_SESSION_SECRET=...
-REVIEWAGENT_API_KEYS=...
+MGREVIEW_AUTH_ENABLED=true
+MGREVIEW_ADMIN_USERNAME=admin
+MGREVIEW_ADMIN_PASSWORD=...
+MGREVIEW_SESSION_SECRET=...
+MGREVIEW_API_KEYS=...
 ```
 
 Then:
@@ -140,7 +140,7 @@ docker compose up dashboard
 
 ## Reverse Proxy Auth Notes
 
-ReviewAgent auth protects the Dashboard. You can still place it behind:
+MagicReview auth protects the Dashboard. You can still place it behind:
 
 - Nginx
 - Caddy
@@ -166,3 +166,6 @@ Dashboard auth and GitHub webhook auth are different:
 - No OAuth, SSO, SAML, or SCIM.
 - Password hashing is planned for a future hardening phase.
 - Dashboard is best suited for personal, team-internal, or private-network deployments.
+
+
+

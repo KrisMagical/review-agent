@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from app.agents.base import ReviewAgent
+from app.agents.base import BaseAgent
 from app.agents.context import AgentContext, AgentResult
 from app.agents.utils import dedupe_and_sort, read_python_source
 from app.analyzers.complexity_analyzer import RadonAdapter
@@ -11,7 +11,7 @@ from app.rules.engine import RuleEngine
 from app.rules.quality import FunctionTooLongRule, MagicNumberRule, TooManyParametersRule, TypeHintRule
 
 
-class QualityAgent(ReviewAgent):
+class QualityAgent(BaseAgent):
     """Run quality, style, and complexity checks."""
 
     name = "quality"

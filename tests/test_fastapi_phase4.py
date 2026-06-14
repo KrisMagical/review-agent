@@ -9,7 +9,7 @@ from app.analyzers.fastapi import (
     PydanticModelAnalyzer,
 )
 from app.reviewer import ReviewService
-from reviewagent.mcp_server import tools
+from magicreview.mcp_server import tools
 
 
 def parse(source: str) -> ast.AST:

@@ -9,6 +9,6 @@ recursive-include docker *
 recursive-include docs *
 recursive-include examples *
 recursive-include app/llm/prompts *.md
-recursive-include reviewagent/dashboard/templates *.html
-recursive-include reviewagent/dashboard/static *.css
+recursive-include magicreview/dashboard/templates *.html
+recursive-include magicreview/dashboard/static *.css
 global-exclude __pycache__ *.py[cod] .DS_Store

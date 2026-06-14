@@ -4,35 +4,35 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from reviewagent.dashboard import app as dashboard_app_module
-from reviewagent.dashboard.auth import (
+from magicreview.dashboard import app as dashboard_app_module
+from magicreview.dashboard.auth import (
     is_valid_api_key,
     is_valid_login,
     load_auth_config,
     parse_basic_auth,
 )
-from reviewagent.storage.repository import ReviewPersistenceService
+from magicreview.storage.repository import ReviewPersistenceService
 
 
 def configure_auth_env(monkeypatch, tmp_path: Path, *, basic: bool = False) -> None:
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(tmp_path / "auth.db"))
-    monkeypatch.setenv("REVIEWAGENT_AUTH_ENABLED", "true")
-    monkeypatch.setenv("REVIEWAGENT_ADMIN_USERNAME", "admin")
-    monkeypatch.setenv("REVIEWAGENT_ADMIN_PASSWORD", "password")
-    monkeypatch.setenv("REVIEWAGENT_SESSION_SECRET", "test-session-secret")
-    monkeypatch.setenv("REVIEWAGENT_API_KEYS", "dev-token,second-token")
-    monkeypatch.setenv("REVIEWAGENT_COOKIE_SECURE", "false")
-    monkeypatch.setenv("REVIEWAGENT_BASIC_AUTH_ENABLED", "true" if basic else "false")
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(tmp_path / "auth.db"))
+    monkeypatch.setenv("MGREVIEW_AUTH_ENABLED", "true")
+    monkeypatch.setenv("MGREVIEW_ADMIN_USERNAME", "admin")
+    monkeypatch.setenv("MGREVIEW_ADMIN_PASSWORD", "password")
+    monkeypatch.setenv("MGREVIEW_SESSION_SECRET", "test-session-secret")
+    monkeypatch.setenv("MGREVIEW_API_KEYS", "dev-token,second-token")
+    monkeypatch.setenv("MGREVIEW_COOKIE_SECURE", "false")
+    monkeypatch.setenv("MGREVIEW_BASIC_AUTH_ENABLED", "true" if basic else "false")
 
 
 def test_auth_config_defaults_and_parsing(monkeypatch) -> None:
     for key in [
-        "REVIEWAGENT_AUTH_ENABLED",
-        "REVIEWAGENT_ADMIN_USERNAME",
-        "REVIEWAGENT_ADMIN_PASSWORD",
-        "REVIEWAGENT_SESSION_SECRET",
-        "REVIEWAGENT_API_KEYS",
-        "REVIEWAGENT_COOKIE_SECURE",
+        "MGREVIEW_AUTH_ENABLED",
+        "MGREVIEW_ADMIN_USERNAME",
+        "MGREVIEW_ADMIN_PASSWORD",
+        "MGREVIEW_SESSION_SECRET",
+        "MGREVIEW_API_KEYS",
+        "MGREVIEW_COOKIE_SECURE",
     ]:
         monkeypatch.delenv(key, raising=False)
 
@@ -41,10 +41,10 @@ def test_auth_config_defaults_and_parsing(monkeypatch) -> None:
     assert default.admin_username == "admin"
     assert default.api_keys == ()
 
-    monkeypatch.setenv("REVIEWAGENT_AUTH_ENABLED", "true")
-    monkeypatch.setenv("REVIEWAGENT_ADMIN_PASSWORD", "password")
-    monkeypatch.setenv("REVIEWAGENT_API_KEYS", "a, b ,, c")
-    monkeypatch.setenv("REVIEWAGENT_COOKIE_SECURE", "true")
+    monkeypatch.setenv("MGREVIEW_AUTH_ENABLED", "true")
+    monkeypatch.setenv("MGREVIEW_ADMIN_PASSWORD", "password")
+    monkeypatch.setenv("MGREVIEW_API_KEYS", "a, b ,, c")
+    monkeypatch.setenv("MGREVIEW_COOKIE_SECURE", "true")
     configured = load_auth_config()
     assert configured.enabled is True
     assert configured.api_keys == ("a", "b", "c")
@@ -52,9 +52,9 @@ def test_auth_config_defaults_and_parsing(monkeypatch) -> None:
 
 
 def test_compare_digest_login_and_api_key(monkeypatch) -> None:
-    monkeypatch.setenv("REVIEWAGENT_ADMIN_USERNAME", "admin")
-    monkeypatch.setenv("REVIEWAGENT_ADMIN_PASSWORD", "password")
-    monkeypatch.setenv("REVIEWAGENT_API_KEYS", "dev-token")
+    monkeypatch.setenv("MGREVIEW_ADMIN_USERNAME", "admin")
+    monkeypatch.setenv("MGREVIEW_ADMIN_PASSWORD", "password")
+    monkeypatch.setenv("MGREVIEW_API_KEYS", "dev-token")
 
     assert is_valid_login("admin", "password")
     assert not is_valid_login("admin", "wrong")
@@ -63,8 +63,8 @@ def test_compare_digest_login_and_api_key(monkeypatch) -> None:
 
 
 def test_dashboard_auth_disabled_allows_pages_and_api(tmp_path: Path, monkeypatch) -> None:
-    monkeypatch.setenv("REVIEWAGENT_DB_PATH", str(tmp_path / "disabled.db"))
-    monkeypatch.setenv("REVIEWAGENT_AUTH_ENABLED", "false")
+    monkeypatch.setenv("MGREVIEW_DB_PATH", str(tmp_path / "disabled.db"))
+    monkeypatch.setenv("MGREVIEW_AUTH_ENABLED", "false")
     client = TestClient(dashboard_app_module.app)
 
     assert client.get("/dashboard").status_code == 200

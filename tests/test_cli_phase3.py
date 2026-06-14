@@ -9,7 +9,7 @@ def test_cli_file_diff_project_still_return_json(tmp_path: Path) -> None:
     target.write_text("def run(a):\n    return a + 42\n", encoding="utf-8")
 
     file_result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "file", str(target)],
+        [sys.executable, "-m", "magicreview.cli.main", "file", str(target)],
         check=True,
         capture_output=True,
         text=True,
@@ -25,7 +25,7 @@ def test_cli_file_diff_project_still_return_json(tmp_path: Path) -> None:
         "+    return a + 42\n"
     )
     diff_result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "diff"],
+        [sys.executable, "-m", "magicreview.cli.main", "diff"],
         input=diff_text,
         check=True,
         capture_output=True,
@@ -34,7 +34,7 @@ def test_cli_file_diff_project_still_return_json(tmp_path: Path) -> None:
     assert "issues" in json.loads(diff_result.stdout)
 
     project_result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "project", str(tmp_path)],
+        [sys.executable, "-m", "magicreview.cli.main", "project", str(tmp_path)],
         check=True,
         capture_output=True,
         text=True,

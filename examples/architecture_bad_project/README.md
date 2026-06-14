@@ -11,13 +11,13 @@ This sample project contains architecture smells for Phase 5 LLM architecture re
 Run static review:
 
 ```bash
-python -m reviewagent.cli.main project examples/architecture_bad_project
+python -m magicreview.cli.main project examples/architecture_bad_project
 ```
 
 Run architecture review with the mock provider:
 
 ```bash
-python -m reviewagent.cli.main project examples/architecture_bad_project --llm --llm-provider mock
+python -m magicreview.cli.main project examples/architecture_bad_project --llm --llm-provider mock
 ```
 
 Real LLM providers must be enabled explicitly with environment variables.

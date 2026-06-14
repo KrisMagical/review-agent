@@ -11,13 +11,13 @@ from app.agents import (
     KnowledgeAgent,
     QualityAgent,
     RefactorAgent,
-    ReviewAgent,
+    BaseAgent,
     ReviewCoordinator,
     SecurityAgent,
 )
 from app.models.issue import Issue
 from app.reviewer import ReviewService
-from reviewagent.mcp_server import tools
+from magicreview.mcp_server import tools
 
 
 def write(path: Path, text: str) -> Path:
@@ -46,7 +46,7 @@ def test_agent_context_and_result_are_serializable(tmp_path: Path) -> None:
     json.dumps(result.to_dict())
 
 
-class GoodAgent(ReviewAgent):
+class GoodAgent(BaseAgent):
     name = "quality"
     category = "test"
 
@@ -74,7 +74,7 @@ class GoodAgent(ReviewAgent):
         )
 
 
-class FailingAgent(ReviewAgent):
+class FailingAgent(BaseAgent):
     name = "bug"
     category = "test"
 
@@ -164,7 +164,7 @@ def test_security_agent_detects_security_risks(tmp_path: Path) -> None:
 
 def test_knowledge_agent_loads_enterprise_config_and_no_config_is_safe(tmp_path: Path) -> None:
     write(
-        tmp_path / "reviewagent.yml",
+        tmp_path / "magicreview.yml",
         "rules:\n"
         "  max_parameters:\n"
         "    enabled: true\n"
@@ -220,13 +220,13 @@ def test_cli_agents_return_json(tmp_path: Path) -> None:
     write(tmp_path / "bad.py", "import os\nAPI_KEY = 'hardcoded'\ndef run(a):\n    return a + 42\n")
 
     all_result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "project", str(tmp_path), "--agents"],
+        [sys.executable, "-m", "magicreview.cli.main", "project", str(tmp_path), "--agents"],
         check=True,
         capture_output=True,
         text=True,
     )
     subset_result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "project", str(tmp_path), "--agents", "quality,security"],
+        [sys.executable, "-m", "magicreview.cli.main", "project", str(tmp_path), "--agents", "quality,security"],
         check=True,
         capture_output=True,
         text=True,

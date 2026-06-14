@@ -3,16 +3,16 @@ import json
 
 import httpx
 
-from reviewagent.integrations.github.app import app, health
-from reviewagent.integrations.github.client import GitHubAppClient
-from reviewagent.integrations.github.commenter import GitHubCommenter
-from reviewagent.integrations.github.config import GitHubAppConfig
-from reviewagent.integrations.github.formatter import SUMMARY_MARKER, format_inline_comment, format_summary_comment, inline_marker
-from reviewagent.integrations.github.mapper import DiffLineMapper
-from reviewagent.integrations.github.models import GitHubReviewResult, PullRequestEvent
-from reviewagent.integrations.github.reviewer import GitHubPullRequestReviewer
-from reviewagent.integrations.github.security import compute_signature, verify_signature
-from reviewagent.integrations.github.webhook import GitHubWebhookHandler
+from magicreview.integrations.github.app import app, health
+from magicreview.integrations.github.client import GitHubAppClient
+from magicreview.integrations.github.commenter import GitHubCommenter
+from magicreview.integrations.github.config import GitHubAppConfig
+from magicreview.integrations.github.formatter import SUMMARY_MARKER, format_inline_comment, format_summary_comment, inline_marker
+from magicreview.integrations.github.mapper import DiffLineMapper
+from magicreview.integrations.github.models import GitHubReviewResult, PullRequestEvent
+from magicreview.integrations.github.reviewer import GitHubPullRequestReviewer
+from magicreview.integrations.github.security import compute_signature, verify_signature
+from magicreview.integrations.github.webhook import GitHubWebhookHandler
 
 
 def sample_payload(action: str = "opened") -> dict:
@@ -134,7 +134,7 @@ def test_github_client_jwt_and_api_calls_are_mocked() -> None:
     assert "SELECT *" in client.get_pull_request_diff("octo", "repo", 7)
     assert client.create_issue_comment("octo", "repo", 7, "body")["id"] == 10
     assert client.create_review_comment("octo", "repo", 7, body="b", commit_id="sha", path="a.py", line=1)["id"] == 11
-    assert client.create_check_run("octo", "repo", name="ReviewAgent", head_sha="sha", conclusion="success", summary="ok")["id"] == 12
+    assert client.create_check_run("octo", "repo", name="MagicReview", head_sha="sha", conclusion="success", summary="ok")["id"] == 12
     assert seen
 
 
@@ -171,7 +171,7 @@ def test_commenter_upserts_summary_and_skips_duplicate_inline() -> None:
             calls["patch"] += 1
             return httpx.Response(200, json={"id": 99})
         if request.url.path.endswith("/pulls/7/comments") and request.method == "GET":
-            return httpx.Response(200, json=[{"body": "<!-- reviewagent-inline:SQLInjectionRule:app/db.py:2 -->"}])
+            return httpx.Response(200, json=[{"body": "<!-- magicreview-inline:SQLInjectionRule:app/db.py:2 -->"}])
         if request.url.path.endswith("/pulls/7/comments") and request.method == "POST":
             calls["post_inline"] += 1
             return httpx.Response(201, json={"id": 1})

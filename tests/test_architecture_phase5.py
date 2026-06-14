@@ -8,7 +8,7 @@ from app.llm.mock_provider import MockLLMProvider
 from app.llm.provider import LLMProvider
 from app.models.issue import Issue
 from app.reviewer import ReviewService
-from reviewagent.mcp_server import tools
+from magicreview.mcp_server import tools
 
 
 def test_context_builder_extracts_project_summaries_and_static_issues(tmp_path: Path) -> None:
@@ -116,7 +116,7 @@ def test_cli_project_llm_mock_returns_architecture_issue() -> None:
         [
             sys.executable,
             "-m",
-            "reviewagent.cli.main",
+            "magicreview.cli.main",
             "project",
             "examples/architecture_bad_project",
             "--llm",

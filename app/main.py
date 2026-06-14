@@ -51,15 +51,15 @@ from app.llm import LLMReviewer
 from app.parser import DiffParser, build_changed_source, get_diff_from_file, get_diff_from_stdin, read_python_file
 from app.report import ReportFormatter, ReviewIssue
 from app.report.cli_formatters import FormatterFactory, filter_issues, has_fail_on_issue
-from app.report.github_publisher import GitHubPublisher, GitHubPublisherError
 from app.reviewer import ProjectReviewer, ReviewService
 from app.rules import RuffLintRule
 from app.rules.architecture import GodObjectDetector
 from app.rules.base import Issue
 from app.rules.engine import RuleEngine
-from reviewagent import __version__
-from reviewagent.storage import ReviewPersistenceService, init_db
-from reviewagent.connected import NetworkPolicy
+from magicreview.connected import NetworkPolicy
+from magicreview import __version__
+from magicreview.config.env import get_env
+from magicreview.storage import ReviewPersistenceService, init_db
 
 
 WORKSPACE_ROOT = Path(os.getcwd()).resolve()
@@ -304,8 +304,10 @@ async def process_pull_request_review(payload: dict[str, Any]) -> None:
         logger.error("Malformed pull_request webhook payload.", exc_info=True)
         return
 
-    publisher = GitHubPublisher(token)
     try:
+        from app.report.github_publisher import GitHubPublisher
+
+        publisher = GitHubPublisher(token)
         diff_text = await publisher.fetch_pull_request_diff(repository, pull_number)
         diff_map = DiffParser.parse(diff_text)
         file_contents = await publisher.fetch_file_contents(repository, diff_map.keys(), ref=head_sha)
@@ -316,18 +318,16 @@ async def process_pull_request_review(payload: dict[str, Any]) -> None:
             commit_id=head_sha,
             issues=issues,
         )
-    except GitHubPublisherError:
-        logger.error("GitHub API integration failed.", exc_info=True)
     except Exception:
-        logger.exception("Unexpected PR review failure.")
+        logger.exception("GitHub PR review publishing failed.")
 
 
 def build_cli_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="review",
-        description="ReviewAgent local CLI for file, diff, project, enterprise, LLM, and multi-agent reviews.",
+        prog="mgreview",
+        description="MagicReview: local-first, self-hostable AI code review platform.",
     )
-    parser.add_argument("--version", action="version", version=f"ReviewAgent {__version__}")
+    parser.add_argument("--version", action="version", version=f"MagicReview {__version__}")
     parser.add_argument("--debug", action="store_true", help="Print detailed CLI errors to stderr.")
     subparsers = parser.add_subparsers(dest="command")
 
@@ -365,12 +365,12 @@ def build_cli_parser() -> argparse.ArgumentParser:
     )
     project_parser.add_argument("--save", action="store_true", help="Save review result to the Dashboard SQLite database.")
 
-    dashboard_parser = subparsers.add_parser("dashboard", help="Manage and serve the ReviewAgent Dashboard.")
+    dashboard_parser = subparsers.add_parser("dashboard", help="Manage and serve the MagicReview Dashboard.")
     dashboard_subparsers = dashboard_parser.add_subparsers(dest="dashboard_command")
     dashboard_subparsers.add_parser("init-db", help="Initialize the Dashboard SQLite database.")
     serve_parser = dashboard_subparsers.add_parser("serve", help="Start the Dashboard server.")
-    serve_parser.add_argument("--host", default=os.getenv("REVIEWAGENT_DASHBOARD_HOST", "127.0.0.1"))
-    serve_parser.add_argument("--port", type=int, default=int(os.getenv("REVIEWAGENT_DASHBOARD_PORT", "8080")))
+    serve_parser.add_argument("--host", default=get_env("DASHBOARD_HOST", "127.0.0.1"))
+    serve_parser.add_argument("--port", type=int, default=int(get_env("DASHBOARD_PORT", "8080") or "8080"))
     return parser
 
 
@@ -416,9 +416,9 @@ def main() -> None:
                 print(json.dumps({"status": "ok", "message": "Dashboard database initialized."}, ensure_ascii=False, indent=2), file=sys.stdout)
                 raise SystemExit(0)
             if args.dashboard_command == "serve":
-                os.environ["REVIEWAGENT_DASHBOARD_HOST"] = args.host
-                os.environ["REVIEWAGENT_DASHBOARD_PORT"] = str(args.port)
-                from reviewagent.dashboard.app import main as dashboard_main
+                os.environ["MGREVIEW_DASHBOARD_HOST"] = args.host
+                os.environ["MGREVIEW_DASHBOARD_PORT"] = str(args.port)
+                from magicreview.dashboard.app import main as dashboard_main
 
                 dashboard_main()
                 raise SystemExit(0)
@@ -449,7 +449,7 @@ def main() -> None:
             import traceback
 
             traceback.print_exc(file=sys.stderr)
-        print(f"ReviewAgent CLI error: {exc}", file=sys.stderr)
+        print(f"MagicReview CLI error: {exc}", file=sys.stderr)
         raise SystemExit(2)
 
 

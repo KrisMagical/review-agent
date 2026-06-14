@@ -1,4 +1,4 @@
-"""Tool implementations exposed by the ReviewAgent MCP server."""
+"""Tool implementations exposed by the magicreview MCP server."""
 
 from mcp_server.tools.review_tools import (
     REVIEW_DIFF_TOOL,

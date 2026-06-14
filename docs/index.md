@@ -1,6 +1,8 @@
 # Documentation Index
 
-Start here if you are evaluating, installing, deploying, or extending ReviewAgent.
+Start here if you are evaluating, installing, deploying, or extending MagicReview.
+
+The current Python package is `magicreview`, and the primary CLI command is `mgreview`.
 
 ## User Guides
 
@@ -11,6 +13,7 @@ Start here if you are evaluating, installing, deploying, or extending ReviewAgen
 - [Auth](auth.md)
 - [Dashboard](dashboard.md)
 - [Hosted Review Web UI](hosted_review.md)
+- [Public Beta](public_beta.md)
 
 ## Integrations
 
@@ -56,3 +59,6 @@ LLM review:
 1. [Model Providers](model_providers.md)
 2. [Connected Services](connected_services.md)
 3. [Privacy](privacy.md)
+
+
+

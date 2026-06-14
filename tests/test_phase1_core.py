@@ -113,7 +113,7 @@ def test_review_file_cli_outputs_json(tmp_path: Path) -> None:
     target.write_text("def run(a):\n    return a + 42\n", encoding="utf-8")
 
     result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "file", str(target)],
+        [sys.executable, "-m", "magicreview.cli.main", "file", str(target)],
         check=True,
         capture_output=True,
         text=True,
@@ -135,7 +135,7 @@ index 1111111..2222222 100644
 """
 
     result = subprocess.run(
-        [sys.executable, "-m", "reviewagent.cli.main", "diff"],
+        [sys.executable, "-m", "magicreview.cli.main", "diff"],
         input=diff_text,
         check=True,
         capture_output=True,

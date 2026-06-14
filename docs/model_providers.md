@@ -7,10 +7,10 @@ Phase 11.4 adds Dashboard model provider settings for optional LLM architecture 
 Default provider:
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=none
+MGREVIEW_LLM_PROVIDER=none
 ```
 
-ReviewAgent does not call real LLM providers by default. Real providers require:
+MagicReview does not call real LLM providers by default. Real providers require:
 
 - API key or endpoint configuration
 - explicit NetworkPolicy authorization
@@ -43,51 +43,51 @@ The page never displays the full API key.
 Environment variables take priority over stored settings:
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=none
-REVIEWAGENT_LLM_MODEL=
+MGREVIEW_LLM_PROVIDER=none
+MGREVIEW_LLM_MODEL=
 OPENAI_API_KEY=
 ANTHROPIC_API_KEY=
 AZURE_OPENAI_API_KEY=
 AZURE_OPENAI_ENDPOINT=
 AZURE_OPENAI_DEPLOYMENT=
 AZURE_OPENAI_API_VERSION=
-REVIEWAGENT_OPENAI_COMPATIBLE_BASE_URL=
-REVIEWAGENT_OPENAI_COMPATIBLE_API_KEY=
-REVIEWAGENT_OLLAMA_BASE_URL=http://localhost:11434
-REVIEWAGENT_ENTERPRISE_LLM_BASE_URL=
-REVIEWAGENT_ENTERPRISE_LLM_API_KEY=
+MGREVIEW_OPENAI_COMPATIBLE_BASE_URL=
+MGREVIEW_OPENAI_COMPATIBLE_API_KEY=
+MGREVIEW_OLLAMA_BASE_URL=http://localhost:11434
+MGREVIEW_ENTERPRISE_LLM_BASE_URL=
+MGREVIEW_ENTERPRISE_LLM_API_KEY=
 ```
 
 ## OpenAI
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=openai
-REVIEWAGENT_LLM_MODEL=gpt-4o-mini
+MGREVIEW_LLM_PROVIDER=openai
+MGREVIEW_LLM_MODEL=gpt-4o-mini
 OPENAI_API_KEY=sk-...
 ```
 
 CLI usage:
 
 ```bash
-review project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
+mgreview project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
 ```
 
 ## Anthropic
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=anthropic
-REVIEWAGENT_LLM_MODEL=claude-3-5-sonnet-latest
+MGREVIEW_LLM_PROVIDER=anthropic
+MGREVIEW_LLM_MODEL=claude-3-5-sonnet-latest
 ANTHROPIC_API_KEY=...
 ```
 
 ```bash
-review project . --llm --llm-provider anthropic --allow-network --allow-llm --code-sharing summary-only
+mgreview project . --llm --llm-provider anthropic --allow-network --allow-llm --code-sharing summary-only
 ```
 
 ## Azure OpenAI
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=azure_openai
+MGREVIEW_LLM_PROVIDER=azure_openai
 AZURE_OPENAI_ENDPOINT=https://example.openai.azure.com
 AZURE_OPENAI_DEPLOYMENT=my-deployment
 AZURE_OPENAI_API_VERSION=2024-02-15-preview
@@ -97,10 +97,10 @@ AZURE_OPENAI_API_KEY=...
 ## OpenAI-Compatible Endpoint
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=openai_compatible
-REVIEWAGENT_OPENAI_COMPATIBLE_BASE_URL=https://gateway.example.com/v1
-REVIEWAGENT_OPENAI_COMPATIBLE_API_KEY=...
-REVIEWAGENT_LLM_MODEL=your-model
+MGREVIEW_LLM_PROVIDER=openai_compatible
+MGREVIEW_OPENAI_COMPATIBLE_BASE_URL=https://gateway.example.com/v1
+MGREVIEW_OPENAI_COMPATIBLE_API_KEY=...
+MGREVIEW_LLM_MODEL=your-model
 ```
 
 Use this for private gateways and providers that expose an OpenAI-style API.
@@ -108,15 +108,15 @@ Use this for private gateways and providers that expose an OpenAI-style API.
 ## Ollama / Local Model
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=ollama
-REVIEWAGENT_LLM_MODEL=llama3.1
-REVIEWAGENT_OLLAMA_BASE_URL=http://localhost:11434
+MGREVIEW_LLM_PROVIDER=ollama
+MGREVIEW_LLM_MODEL=llama3.1
+MGREVIEW_OLLAMA_BASE_URL=http://localhost:11434
 ```
 
 Docker host Ollama is often:
 
 ```bash
-REVIEWAGENT_OLLAMA_BASE_URL=http://host.docker.internal:11434
+MGREVIEW_OLLAMA_BASE_URL=http://host.docker.internal:11434
 ```
 
 Linux Docker may need host gateway configuration. If Ollama points to a remote server, treat it as networked.
@@ -124,10 +124,10 @@ Linux Docker may need host gateway configuration. If Ollama points to a remote s
 ## Enterprise Gateway
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=enterprise_gateway
-REVIEWAGENT_ENTERPRISE_LLM_BASE_URL=https://llm-gateway.example.com/v1
-REVIEWAGENT_ENTERPRISE_LLM_API_KEY=...
-REVIEWAGENT_LLM_MODEL=approved-model
+MGREVIEW_LLM_PROVIDER=enterprise_gateway
+MGREVIEW_ENTERPRISE_LLM_BASE_URL=https://llm-gateway.example.com/v1
+MGREVIEW_ENTERPRISE_LLM_API_KEY=...
+MGREVIEW_LLM_MODEL=approved-model
 ```
 
 Use this when your organization routes AI traffic through an internal gateway.
@@ -188,15 +188,15 @@ docker compose up dashboard
 For real providers, also configure:
 
 ```bash
-REVIEWAGENT_NETWORK_ENABLED=true
-REVIEWAGENT_ALLOW_LLM=true
-REVIEWAGENT_CODE_SHARING_MODE=summary_only
+MGREVIEW_NETWORK_ENABLED=true
+MGREVIEW_ALLOW_LLM=true
+MGREVIEW_CODE_SHARING_MODE=summary_only
 ```
 
 ## Security Notes
 
 - Default provider is `none`.
-- Dashboard settings do not make CLI `review project .` call LLM automatically.
+- Dashboard settings do not make CLI `mgreview project .` call LLM automatically.
 - CLI still requires `--llm` and network flags for real providers.
 - Do not put API keys in Git.
 - Avoid `full_context` for sensitive projects.
@@ -207,3 +207,6 @@ REVIEWAGENT_CODE_SHARING_MODE=summary_only
 - No RBAC or SSO.
 - Stored keys are not encrypted at rest.
 - Provider settings are local/self-hosted, not a SaaS control plane.
+
+
+

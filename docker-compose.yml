@@ -1,33 +1,33 @@
 services:
   dashboard:
     build: .
-    image: reviewagent:local
-    command: reviewagent-dashboard
+    image: magicreview:local
+    command: mgreview dashboard serve --host 0.0.0.0 --port 8080
     ports:
       - "8080:8080"
     volumes:
-      - ./.reviewagent:/data
+      - ./.magicreview:/data
       - ./:/workspace:ro
     env_file:
       - path: .env
         required: false
     environment:
-      REVIEWAGENT_DB_PATH: /data/reviewagent.db
-      REVIEWAGENT_DASHBOARD_HOST: 0.0.0.0
-      REVIEWAGENT_DASHBOARD_PORT: 8080
-      REVIEWAGENT_LLM_PROVIDER: none
-      REVIEWAGENT_NETWORK_ENABLED: "false"
-      REVIEWAGENT_ALLOW_LLM: "false"
-      REVIEWAGENT_CODE_SHARING_MODE: none
-      REVIEWAGENT_AUTH_ENABLED: ${REVIEWAGENT_AUTH_ENABLED:-false}
-      REVIEWAGENT_ADMIN_USERNAME: ${REVIEWAGENT_ADMIN_USERNAME:-admin}
-      REVIEWAGENT_ADMIN_PASSWORD: ${REVIEWAGENT_ADMIN_PASSWORD:-}
-      REVIEWAGENT_SESSION_SECRET: ${REVIEWAGENT_SESSION_SECRET:-}
-      REVIEWAGENT_API_KEYS: ${REVIEWAGENT_API_KEYS:-}
-      REVIEWAGENT_COOKIE_SECURE: ${REVIEWAGENT_COOKIE_SECURE:-false}
-      REVIEWAGENT_BASIC_AUTH_ENABLED: ${REVIEWAGENT_BASIC_AUTH_ENABLED:-false}
-      REVIEWAGENT_ALLOWED_REVIEW_ROOTS: ${REVIEWAGENT_ALLOWED_REVIEW_ROOTS:-/workspace}
-      REVIEWAGENT_MAX_UPLOAD_BYTES: ${REVIEWAGENT_MAX_UPLOAD_BYTES:-5242880}
+      MGREVIEW_DB_PATH: /data/magicreview.db
+      MGREVIEW_DASHBOARD_HOST: 0.0.0.0
+      MGREVIEW_DASHBOARD_PORT: 8080
+      MGREVIEW_LLM_PROVIDER: none
+      MGREVIEW_NETWORK_ENABLED: "false"
+      MGREVIEW_ALLOW_LLM: "false"
+      MGREVIEW_CODE_SHARING_MODE: none
+      MGREVIEW_AUTH_ENABLED: ${MGREVIEW_AUTH_ENABLED:-false}
+      MGREVIEW_ADMIN_USERNAME: ${MGREVIEW_ADMIN_USERNAME:-admin}
+      MGREVIEW_ADMIN_PASSWORD: ${MGREVIEW_ADMIN_PASSWORD:-}
+      MGREVIEW_SESSION_SECRET: ${MGREVIEW_SESSION_SECRET:-}
+      MGREVIEW_API_KEYS: ${MGREVIEW_API_KEYS:-}
+      MGREVIEW_COOKIE_SECURE: ${MGREVIEW_COOKIE_SECURE:-false}
+      MGREVIEW_BASIC_AUTH_ENABLED: ${MGREVIEW_BASIC_AUTH_ENABLED:-false}
+      MGREVIEW_ALLOWED_REVIEW_ROOTS: ${MGREVIEW_ALLOWED_REVIEW_ROOTS:-/workspace}
+      MGREVIEW_MAX_UPLOAD_BYTES: ${MGREVIEW_MAX_UPLOAD_BYTES:-5242880}
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health').read()"]
@@ -37,26 +37,26 @@ services:
 
   github-app:
     build: .
-    image: reviewagent:local
-    command: reviewagent-github-app
+    image: magicreview:local
+    command: mgreview github-app serve
     ports:
       - "8000:8000"
     volumes:
-      - ./.reviewagent:/data
+      - ./.magicreview:/data
     env_file:
       - path: .env
         required: false
     environment:
-      REVIEWAGENT_DB_PATH: /data/reviewagent.db
-      REVIEWAGENT_GITHUB_HOST: 0.0.0.0
-      REVIEWAGENT_GITHUB_PORT: 8000
-      REVIEWAGENT_GITHUB_ENABLE_LLM: "false"
-      REVIEWAGENT_GITHUB_ENABLE_AGENTS: "false"
-      REVIEWAGENT_GITHUB_REVIEW_MODE: diff_only
-      REVIEWAGENT_LLM_PROVIDER: none
-      REVIEWAGENT_NETWORK_ENABLED: "false"
-      REVIEWAGENT_ALLOW_LLM: "false"
-      REVIEWAGENT_CODE_SHARING_MODE: none
+      MGREVIEW_DB_PATH: /data/magicreview.db
+      MGREVIEW_GITHUB_HOST: 0.0.0.0
+      MGREVIEW_GITHUB_PORT: 8000
+      MGREVIEW_GITHUB_ENABLE_LLM: "false"
+      MGREVIEW_GITHUB_ENABLE_AGENTS: "false"
+      MGREVIEW_GITHUB_REVIEW_MODE: diff_only
+      MGREVIEW_LLM_PROVIDER: none
+      MGREVIEW_NETWORK_ENABLED: "false"
+      MGREVIEW_ALLOW_LLM: "false"
+      MGREVIEW_CODE_SHARING_MODE: none
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"]
       interval: 30s
@@ -65,14 +65,14 @@ services:
 
   mcp:
     build: .
-    image: reviewagent:local
-    command: reviewagent-mcp
+    image: magicreview:local
+    command: mgreview mcp
     stdin_open: true
     tty: true
     profiles:
       - mcp
     environment:
-      REVIEWAGENT_LLM_PROVIDER: none
-      REVIEWAGENT_NETWORK_ENABLED: "false"
-      REVIEWAGENT_ALLOW_LLM: "false"
-      REVIEWAGENT_CODE_SHARING_MODE: none
+      MGREVIEW_LLM_PROVIDER: none
+      MGREVIEW_NETWORK_ENABLED: "false"
+      MGREVIEW_ALLOW_LLM: "false"
+      MGREVIEW_CODE_SHARING_MODE: none

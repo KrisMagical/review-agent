@@ -14,10 +14,10 @@ jobs:
         python-version: ["3.12"]
 
     env:
-      REVIEWAGENT_LLM_PROVIDER: none
-      REVIEWAGENT_NETWORK_ENABLED: "false"
-      REVIEWAGENT_ALLOW_LLM: "false"
-      REVIEWAGENT_CODE_SHARING_MODE: none
+      MGREVIEW_LLM_PROVIDER: none
+      MGREVIEW_NETWORK_ENABLED: "false"
+      MGREVIEW_ALLOW_LLM: "false"
+      MGREVIEW_CODE_SHARING_MODE: none
 
     steps:
       - name: Checkout
@@ -39,8 +39,8 @@ jobs:
 
       - name: Smoke test CLI
         run: |
-          review --help
-          review --version
-          review file examples/bad_code.py --format json
-          review project examples/multi_agent_project --agents --format json
-          python -m reviewagent.cli.main --help
+          mgreview --help
+          mgreview --version
+          mgreview file examples/bad_code.py --format json
+          mgreview project examples/multi_agent_project --agents --format json
+          python -m magicreview.cli.main --help

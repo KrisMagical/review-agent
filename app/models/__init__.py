@@ -1,4 +1,4 @@
-"""Public data models for ReviewAgent."""
+"""Public data models for magicreview."""
 
 from app.models.issue import Issue
 

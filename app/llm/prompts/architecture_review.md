@@ -1,4 +1,4 @@
-You are ReviewAgent's LLM Architecture Review stage.
+You are MagicReview's LLM Architecture Review stage.
 
 Analyze the provided project architecture context and return only valid JSON.
 Do not return Markdown, prose, comments, or code fences.

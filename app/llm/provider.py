@@ -8,7 +8,8 @@ from typing import Any
 
 import httpx
 
-from reviewagent.connected import NetworkPolicy
+from magicreview.connected import NetworkPolicy
+from magicreview.config.env import get_env
 
 
 class LLMProviderError(RuntimeError):
@@ -37,7 +38,7 @@ class OpenAILLMProvider(LLMProvider):
     requires_network = True
 
     def __init__(self, model: str | None = None, *, timeout: float = 30, max_output_tokens: int = 1200) -> None:
-        self.model = model or os.getenv("REVIEWAGENT_LLM_MODEL") or "gpt-4o-mini"
+        self.model = model or get_env("LLM_MODEL") or "gpt-4o-mini"
         self.timeout = timeout
         self.max_output_tokens = max_output_tokens
 
@@ -62,7 +63,7 @@ class OpenAILLMProvider(LLMProvider):
     def _check_policy(self, policy: NetworkPolicy | None) -> None:
         active = policy or NetworkPolicy.offline()
         if not active.allows_provider(self.name):
-            raise LLMProviderError("Network LLM provider is not allowed by ReviewAgent NetworkPolicy.")
+            raise LLMProviderError("Network LLM provider is not allowed by MagicReview NetworkPolicy.")
 
 
 class AnthropicLLMProvider(LLMProvider):
@@ -70,7 +71,7 @@ class AnthropicLLMProvider(LLMProvider):
     requires_network = True
 
     def __init__(self, model: str | None = None, *, timeout: float = 30, max_output_tokens: int = 1200, http_client: httpx.Client | None = None) -> None:
-        self.model = model or os.getenv("REVIEWAGENT_ANTHROPIC_MODEL") or "claude-3-5-sonnet-latest"
+        self.model = model or get_env("ANTHROPIC_MODEL") or "claude-3-5-sonnet-latest"
         self.timeout = timeout
         self.max_output_tokens = max_output_tokens
         self.http_client = http_client
@@ -78,7 +79,7 @@ class AnthropicLLMProvider(LLMProvider):
     def complete(self, prompt: str, policy: NetworkPolicy | None = None) -> str:
         active = policy or NetworkPolicy.offline()
         if not active.allows_provider(self.name):
-            raise LLMProviderError("Network LLM provider is not allowed by ReviewAgent NetworkPolicy.")
+            raise LLMProviderError("Network LLM provider is not allowed by MagicReview NetworkPolicy.")
         api_key = os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
             raise LLMProviderError("ANTHROPIC_API_KEY is not configured.")
@@ -115,7 +116,7 @@ class AzureOpenAILLMProvider(OpenAILLMProvider):
 
 
 def provider_from_env(name: str | None = None) -> LLMProvider:
-    provider = (name or os.getenv("REVIEWAGENT_LLM_PROVIDER") or "none").lower()
+    provider = (name or get_env("LLM_PROVIDER") or "none").lower()
     if provider == "openai":
         return OpenAILLMProvider()
     if provider == "anthropic":

@@ -25,4 +25,4 @@ jobs:
           python -m pip install ruff
 
       - name: Ruff check
-        run: ruff check reviewagent tests
+        run: ruff check magicreview tests

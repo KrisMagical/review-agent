@@ -1,6 +1,6 @@
 # Dashboard
 
-The Dashboard is ReviewAgent's local governance UI for review history, issue trends, model settings, hosted review, and connected-service audit.
+The Dashboard is MagicReview's local governance UI for review history, issue trends, model settings, hosted review, and connected-service audit.
 
 ## Dashboard Overview
 
@@ -22,15 +22,15 @@ It does not replace CLI, MCP, or GitHub App workflows.
 ## Start Dashboard
 
 ```bash
-review dashboard init-db
-review dashboard serve --host 127.0.0.1 --port 8080
+mgreview dashboard init-db
+mgreview dashboard serve --host 127.0.0.1 --port 8080
 ```
 
 Other entry points:
 
 ```bash
-reviewagent-dashboard
-python -m reviewagent.dashboard.app
+mgreview-dashboard
+python -m magicreview.dashboard.app
 ```
 
 Docker:
@@ -44,11 +44,11 @@ docker compose up dashboard
 Auth is disabled by default for local development. Enable before server/public access:
 
 ```bash
-REVIEWAGENT_AUTH_ENABLED=true
-REVIEWAGENT_ADMIN_USERNAME=admin
-REVIEWAGENT_ADMIN_PASSWORD=...
-REVIEWAGENT_SESSION_SECRET=...
-REVIEWAGENT_API_KEYS=...
+MGREVIEW_AUTH_ENABLED=true
+MGREVIEW_ADMIN_USERNAME=admin
+MGREVIEW_ADMIN_PASSWORD=...
+MGREVIEW_SESSION_SECRET=...
+MGREVIEW_API_KEYS=...
 ```
 
 When enabled:
@@ -112,7 +112,7 @@ Pages:
 - `/review/project`
 - `/review/github-pr`
 
-Hosted project review is restricted by `REVIEWAGENT_ALLOWED_REVIEW_ROOTS`.
+Hosted project review is restricted by `MGREVIEW_ALLOWED_REVIEW_ROOTS`.
 
 ## GitHub PR full_project Metadata
 
@@ -133,19 +133,19 @@ It does not store token, source files, full diff, private keys, or full prompt.
 Default:
 
 ```text
-.reviewagent/reviewagent.db
+.magicreview/magicreview.db
 ```
 
 Docker:
 
 ```text
-/data/reviewagent.db
+/data/magicreview.db
 ```
 
 Override:
 
 ```bash
-REVIEWAGENT_DB_PATH=/path/to/reviewagent.db
+MGREVIEW_DB_PATH=/path/to/magicreview.db
 ```
 
 ## Docker Deployment
@@ -160,7 +160,7 @@ Open:
 http://127.0.0.1:8080
 ```
 
-Compose mounts `.reviewagent` for database persistence and `/workspace` for hosted project review.
+Compose mounts `.magicreview` for database persistence and `/workspace` for hosted project review.
 
 ## API Routes
 
@@ -218,3 +218,7 @@ Compose mounts `.reviewagent` for database persistence and `/workspace` for host
 - No background queue; hosted reviews run synchronously.
 - No advanced frontend framework.
 - No SaaS tenant isolation.
+
+
+
+

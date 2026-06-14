@@ -11,8 +11,8 @@ from pydantic import ValidationError
 from app.architecture.context_builder import ArchitectureContextBuilder
 from app.models.issue import Issue
 from app.llm.provider import LLMProvider, LLMProviderError, provider_from_env
-from reviewagent.connected import NetworkPolicy
-from reviewagent.storage import ReviewPersistenceService
+from magicreview.connected import NetworkPolicy
+from magicreview.storage import ReviewPersistenceService
 
 
 class ArchitectureReviewer:
@@ -135,7 +135,7 @@ class ArchitectureReviewer:
             file="<project>",
             line=1,
             message="LLM architecture review failed or is not configured.",
-            suggestion="Configure REVIEWAGENT_LLM_PROVIDER and API credentials, or run without --llm.",
+            suggestion="Configure MGREVIEW_LLM_PROVIDER and API credentials, or run without --llm.",
         )
 
     def _audit(self, *, status: str, error_type: str | None) -> None:

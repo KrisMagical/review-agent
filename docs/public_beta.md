@@ -1,22 +1,22 @@
 # Public Beta Guide
 
-ReviewAgent is ready for public beta evaluation as a local-first, self-hostable code review platform.
+MagicReview is ready for public beta evaluation as a local-first, self-hostable code review platform.
 
 ## Supported Usage Modes
 
 - Local CLI:
-  - `review file`
-  - `review diff`
-  - `review project`
+  - `mgreview file`
+  - `mgreview diff`
+  - `mgreview project`
 - Multi-agent project review:
-  - `review project . --agents`
+  - `mgreview project . --agents`
 - Enterprise YAML/JSON rules:
-  - `review project . --config reviewagent.yml`
+  - `mgreview project . --config magicreview.yml`
 - Optional LLM architecture review:
-  - `review project . --llm --llm-provider mock`
+  - `mgreview project . --llm --llm-provider mock`
   - real providers require explicit network authorization
 - MCP stdio server:
-  - `reviewagent-mcp`
+  - `mgreview-mcp`
 - GitHub App PR review:
   - `diff_only`
   - optional `full_project`
@@ -45,7 +45,7 @@ ReviewAgent is ready for public beta evaluation as a local-first, self-hostable 
 
 ## Security Boundaries
 
-ReviewAgent defaults are conservative:
+MagicReview defaults are conservative:
 
 - local-first
 - offline by default
@@ -58,11 +58,11 @@ ReviewAgent defaults are conservative:
 Enable Dashboard auth before server exposure:
 
 ```bash
-REVIEWAGENT_AUTH_ENABLED=true
-REVIEWAGENT_ADMIN_USERNAME=admin
-REVIEWAGENT_ADMIN_PASSWORD=...
-REVIEWAGENT_SESSION_SECRET=...
-REVIEWAGENT_API_KEYS=...
+MGREVIEW_AUTH_ENABLED=true
+MGREVIEW_ADMIN_USERNAME=admin
+MGREVIEW_ADMIN_PASSWORD=...
+MGREVIEW_SESSION_SECRET=...
+MGREVIEW_API_KEYS=...
 ```
 
 Use HTTPS, VPN, Tailscale, WireGuard, or Cloudflare Tunnel for remote access.
@@ -71,7 +71,7 @@ Use HTTPS, VPN, Tailscale, WireGuard, or Cloudflare Tunnel for remote access.
 
 When opening an issue, include:
 
-- ReviewAgent version: `review --version`
+- MagicReview version: `mgreview --version`
 - Python version: `python --version`
 - OS and shell
 - command you ran
@@ -96,12 +96,12 @@ What should have happened?
 ## Command
 
 ```bash
-review project . --format json
+mgreview project . --format json
 ```
 
 ## Environment
 
-- ReviewAgent:
+- MagicReview:
 - Python:
 - OS:
 - Install method:
@@ -135,13 +135,13 @@ Enterprise rules can often start as YAML/JSON policy examples before becoming bu
 Build:
 
 ```bash
-docker build -t reviewagent .
+docker build -t magicreview .
 ```
 
 Run CLI:
 
 ```bash
-docker run --rm reviewagent review --help
+docker run --rm magicreview mgreview --help
 ```
 
 Review current project:
@@ -149,13 +149,13 @@ Review current project:
 Windows PowerShell:
 
 ```powershell
-docker run --rm -v "${PWD}:/workspace" reviewagent review project /workspace --format json
+docker run --rm -v "${PWD}:/workspace" magicreview mgreview project /workspace --format json
 ```
 
 Linux/macOS:
 
 ```bash
-docker run --rm -v "$PWD:/workspace" reviewagent review project /workspace --format json
+docker run --rm -v "$PWD:/workspace" magicreview mgreview project /workspace --format json
 ```
 
 Run Dashboard:
@@ -177,23 +177,23 @@ Do not commit `.env`; use `.env.example` as a starting point.
 Offline mock provider:
 
 ```bash
-review project . --llm --llm-provider mock
+mgreview project . --llm --llm-provider mock
 ```
 
 Real provider example:
 
 ```bash
-review project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
+mgreview project . --llm --llm-provider openai --allow-network --allow-llm --code-sharing summary-only
 ```
 
 Environment example:
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=openai
+MGREVIEW_LLM_PROVIDER=openai
 OPENAI_API_KEY=...
-REVIEWAGENT_NETWORK_ENABLED=true
-REVIEWAGENT_ALLOW_LLM=true
-REVIEWAGENT_CODE_SHARING_MODE=summary_only
+MGREVIEW_NETWORK_ENABLED=true
+MGREVIEW_ALLOW_LLM=true
+MGREVIEW_CODE_SHARING_MODE=summary_only
 ```
 
 Use `summary_only` unless your team has approved broader sharing.
@@ -203,10 +203,10 @@ Use `summary_only` unless your team has approved broader sharing.
 Default:
 
 ```bash
-REVIEWAGENT_LLM_PROVIDER=none
-REVIEWAGENT_NETWORK_ENABLED=false
-REVIEWAGENT_ALLOW_LLM=false
-REVIEWAGENT_CODE_SHARING_MODE=none
+MGREVIEW_LLM_PROVIDER=none
+MGREVIEW_NETWORK_ENABLED=false
+MGREVIEW_ALLOW_LLM=false
+MGREVIEW_CODE_SHARING_MODE=none
 ```
 
 Avoid passing:
@@ -221,12 +221,16 @@ For MCP, omit `network_policy` unless networked LLM review is explicitly approve
 
 - `pip install -e ".[all,dev]"`
 - `pytest --basetemp=.pytest_tmp`
-- `review --help`
-- `review project . --format terminal`
-- `review project . --agents --format json`
-- `review project . --llm --llm-provider mock`
-- `docker build -t reviewagent .`
+- `mgreview --help`
+- `mgreview project . --format terminal`
+- `mgreview project . --agents --format json`
+- `mgreview project . --llm --llm-provider mock`
+- `docker build -t magicreview .`
 - `docker compose config`
 - Dashboard opens locally
 - Hosted Review pages are reachable
 - No unexpected network calls occur
+
+
+
+

@@ -1,21 +1,21 @@
 # Enterprise Rule Center
 
-Phase 5.5 adds configurable enterprise rules on top of ReviewAgent's built-in
+Phase 5.5 adds configurable enterprise rules on top of MagicReview's built-in
 static analyzers.
 
 It lets teams encode local coding standards in YAML or JSON and run them during
-`review project`, optional `review file`, and MCP `review_project` calls.
+`mgreview project`, optional `mgreview file`, and MCP `review_project` calls.
 
 ## Config files
 
 Automatic search order inside the project root:
 
-1. `reviewagent.yml`
-2. `reviewagent.yaml`
-3. `reviewagent.json`
-4. `.reviewagent.yml`
-5. `.reviewagent.yaml`
-6. `.reviewagent.json`
+1. `magicreview.yml`
+2. `magicreview.yaml`
+3. `magicreview.json`
+4. `.magicreview.yml`
+5. `.magicreview.yaml`
+6. `.magicreview.json`
 
 Explicit config paths can be passed with CLI or MCP.
 
@@ -55,25 +55,25 @@ rules:
 Auto-discover config:
 
 ```bash
-python -m reviewagent.cli.main project examples/enterprise_policy_project
+python -m magicreview.cli.main project examples/enterprise_policy_project
 ```
 
 Explicit config:
 
 ```bash
-python -m reviewagent.cli.main project examples/enterprise_policy_project --config examples/enterprise_policy_project/reviewagent.yml
+python -m magicreview.cli.main project examples/enterprise_policy_project --config examples/enterprise_policy_project/magicreview.yml
 ```
 
 Disable enterprise rules:
 
 ```bash
-python -m reviewagent.cli.main project examples/enterprise_policy_project --no-enterprise
+python -m magicreview.cli.main project examples/enterprise_policy_project --no-enterprise
 ```
 
 Combine with LLM architecture review:
 
 ```bash
-python -m reviewagent.cli.main project examples/enterprise_policy_project --config examples/enterprise_policy_project/reviewagent.yml --llm --llm-provider mock
+python -m magicreview.cli.main project examples/enterprise_policy_project --config examples/enterprise_policy_project/magicreview.yml --llm --llm-provider mock
 ```
 
 ## MCP
@@ -81,7 +81,7 @@ python -m reviewagent.cli.main project examples/enterprise_policy_project --conf
 ```json
 {
   "path": "examples/enterprise_policy_project",
-  "config_path": "examples/enterprise_policy_project/reviewagent.yml",
+  "config_path": "examples/enterprise_policy_project/magicreview.yml",
   "enable_enterprise_rules": true
 }
 ```
@@ -98,3 +98,6 @@ python -m reviewagent.cli.main project examples/enterprise_policy_project --conf
 
 Phase 5.5 is a local configurable rule center. Remote rule markets, enterprise
 knowledge bases, and multi-agent policy workflows are reserved for later phases.
+
+
+
