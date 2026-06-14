@@ -36,7 +36,7 @@ def test_review_console_help_and_version() -> None:
 
     version_result = _run([sys.executable, "-m", "magicreview.cli.main", "--version"])
     assert version_result.returncode == 0, version_result.stderr
-    assert version_result.stdout.strip() == "MagicReview 0.1.2"
+    assert version_result.stdout.strip() == "MagicReview 0.1.3"
 
 
 def test_python_module_cli_help() -> None:

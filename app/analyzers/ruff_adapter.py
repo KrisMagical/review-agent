@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from app.models.issue import Issue
+from app.project.scanner import ProjectScanner
 
 
 RuffDiagnostic = dict[str, Any]
@@ -38,7 +39,13 @@ class RuffAdapter:
         return [issue for issue in issues if issue.line in line_numbers]
 
     def check_project(self, project_dir: str | Path = ".") -> list[Issue]:
-        return self._issues_for_target(project_dir)
+        root = self._resolve_path(project_dir)
+        if root.is_dir():
+            files = [root / relative_path for relative_path in ProjectScanner().scan(root)]
+            if not files:
+                return []
+            return self._issues_for_targets(files)
+        return self._issues_for_target(root)
 
     def analyze_diff_files(self, diff_results: list[dict[str, Any]]) -> list[Issue]:
         issues: list[Issue] = []
@@ -54,10 +61,19 @@ class RuffAdapter:
             return self._unavailable_issue("Ruff is not available.")
         return [self._diagnostic_to_issue(item, fallback_file=str(target)) for item in diagnostics]
 
+    def _issues_for_targets(self, targets: list[Path]) -> list[Issue]:
+        diagnostics = self._run_ruff_json_targets(targets)
+        if diagnostics is None:
+            return self._unavailable_issue("Ruff is not available.")
+        return [self._diagnostic_to_issue(item, fallback_file=str(targets[0])) for item in diagnostics]
+
     def _run_ruff_json(self, target: Path) -> list[RuffDiagnostic] | None:
+        return self._run_ruff_json_targets([target])
+
+    def _run_ruff_json_targets(self, targets: list[Path]) -> list[RuffDiagnostic] | None:
         commands = [
-            [self.ruff_executable, "check", str(target), "--output-format", "json"],
-            [self.ruff_executable, "check", str(target), "--format", "json"],
+            [self.ruff_executable, "check", *(str(target) for target in targets), "--output-format", "json"],
+            [self.ruff_executable, "check", *(str(target) for target in targets), "--format", "json"],
         ]
         last_result: subprocess.CompletedProcess[str] | None = None
         for command in commands:

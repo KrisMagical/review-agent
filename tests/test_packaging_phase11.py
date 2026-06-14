@@ -18,7 +18,7 @@ def run_module_cli(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 def test_package_version_is_available() -> None:
-    assert magicreview.__version__ == "0.1.2"
+    assert magicreview.__version__ == "0.1.3"
 
 
 def test_cli_version_uses_package_version() -> None:

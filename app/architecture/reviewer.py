@@ -11,6 +11,7 @@ from pydantic import ValidationError
 from app.architecture.context_builder import ArchitectureContextBuilder
 from app.models.issue import Issue
 from app.llm.provider import LLMProvider, LLMProviderError, provider_from_env
+from app.project.scanner import ProjectScanner
 from magicreview.connected import NetworkPolicy
 from magicreview.storage import ReviewPersistenceService
 
@@ -111,7 +112,7 @@ class ArchitectureReviewer:
     def _valid_files(project_root: str | Path) -> set[str]:
         root = Path(project_root).resolve()
         try:
-            return {path.relative_to(root).as_posix() for path in root.rglob("*.py")}
+            return {path.as_posix() for path in ProjectScanner().scan(root)}
         except OSError:
             return set()
 

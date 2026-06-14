@@ -7,6 +7,13 @@ and this project uses semantic versioning while it is prepared for public releas
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-06-14
+
+### Fixed
+
+- Excluded virtual environments, site-packages, dependency folders, build outputs, and local MagicReview data directories from project scanning.
+- Fixed project review recursion failures when running `mgreview project .` from directories containing `.venv_testpypi` or other virtual environments.
+
 ## [0.1.2] - 2026-06-14
 
 ### Fixed
