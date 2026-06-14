@@ -7,6 +7,12 @@ and this project uses semantic versioning while it is prepared for public releas
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-06-14
+
+### Fixed
+
+- Added missing runtime dependency `httpx` so installed `mgreview file/project` commands work from TestPyPI/PyPI installations.
+
 ## [0.1.1] - 2026-06-11
 
 ### Changed
