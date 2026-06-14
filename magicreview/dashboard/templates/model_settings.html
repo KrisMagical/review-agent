@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Model Provider Settings</h2>
+
+{% if saved %}
+<p class="notice-message">Settings saved.</p>
+{% endif %}
+{% if test_result %}
+<p class="notice-message">Provider test {{ test_result }}.</p>
+{% endif %}
+
+<section class="settings-warning">
+  <strong>Local-first default:</strong>
+  real LLM providers require explicit network and LLM authorization. API keys are never displayed in full.
+</section>
+
+{% if settings.code_sharing_mode in ["snippets", "full_context"] %}
+<section class="settings-warning danger">
+  {{ settings.code_sharing_mode }} may send source code context to the configured provider.
+</section>
+{% endif %}
+
+<form class="settings-form" method="post" action="/settings/models">
+  <label>
+    Provider
+    <select name="provider">
+      {% for value, label in [
+        ("none", "None / Disabled"),
+        ("mock", "Mock Provider"),
+        ("openai", "OpenAI"),
+        ("anthropic", "Anthropic"),
+        ("azure_openai", "Azure OpenAI"),
+        ("openai_compatible", "OpenAI-compatible Endpoint"),
+        ("ollama", "Ollama / Local Model"),
+        ("enterprise_gateway", "Enterprise Gateway")
+      ] %}
+      <option value="{{ value }}" {% if settings.provider == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>
+    Model
+    <input type="text" name="model" value="{{ settings.model or '' }}" placeholder="gpt-4o-mini">
+  </label>
+
+  <label>
+    Base URL / Endpoint
+    <input type="text" name="base_url" value="{{ settings.base_url or '' }}" placeholder="https://api.openai.com/v1">
+  </label>
+
+  <label>
+    API key
+    <input type="password" name="api_key" value="" placeholder="{% if settings.api_key_masked %}{{ settings.api_key_masked }}{% else %}Leave blank to keep empty{% endif %}">
+  </label>
+  <p>API key source: <strong>{{ settings.api_key_source }}</strong>{% if settings.api_key_masked %} ({{ settings.api_key_masked }}){% endif %}</p>
+
+  <label>
+    Code sharing mode
+    <select name="code_sharing_mode">
+      {% for value in ["none", "summary_only", "snippets", "full_context"] %}
+      <option value="{{ value }}" {% if settings.code_sharing_mode == value %}selected{% endif %}>{{ value }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>
+    Timeout seconds
+    <input type="number" name="timeout_seconds" value="{{ settings.timeout_seconds }}" min="1" max="300">
+  </label>
+
+  <label>
+    Max context chars
+    <input type="number" name="max_context_chars" value="{{ settings.max_context_chars }}" min="1000">
+  </label>
+
+  <label>
+    Azure deployment
+    <input type="text" name="azure_deployment" value="{{ settings.azure_deployment or '' }}">
+  </label>
+
+  <label>
+    Azure API version
+    <input type="text" name="azure_api_version" value="{{ settings.azure_api_version or '' }}">
+  </label>
+
+  <label>
+    Organization / workspace
+    <input type="text" name="organization" value="{{ settings.organization or '' }}">
+  </label>
+
+  <div class="checkbox-row">
+    <label><input type="checkbox" name="enabled" {% if settings.enabled %}checked{% endif %}> Enabled</label>
+    <label><input type="checkbox" name="allow_network" {% if settings.allow_network %}checked{% endif %}> Allow network</label>
+    <label><input type="checkbox" name="allow_llm" {% if settings.allow_llm %}checked{% endif %}> Allow LLM</label>
+    <label><input type="checkbox" name="audit_enabled" {% if settings.audit_enabled %}checked{% endif %}> Audit enabled</label>
+  </div>
+
+  <div class="actions">
+    <button type="submit" name="action" value="save">Save settings</button>
+    <button type="submit" name="action" value="test">Test connection</button>
+    <button type="submit" name="provider" value="none">Disable LLM</button>
+    <button type="submit" name="action" value="clear_api_key">Clear stored API key</button>
+  </div>
+</form>
+{% endblock %}

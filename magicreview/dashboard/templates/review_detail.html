@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Review #{{ review.id }}</h2>
+<section class="metrics">
+  <div><strong>{{ review.total_issues }}</strong><span>Total</span></div>
+  <div><strong>{{ review.critical_count }}</strong><span>Critical</span></div>
+  <div><strong>{{ review.high_count }}</strong><span>High</span></div>
+  <div><strong>{{ review.medium_count }}</strong><span>Medium</span></div>
+  <div><strong>{{ review.low_count }}</strong><span>Low</span></div>
+</section>
+<h3>Issues</h3>
+<table>
+  <tr><th>Severity</th><th>Type</th><th>File</th><th>Line</th><th>Message</th><th>Suggestion</th></tr>
+  {% for issue in issues %}
+  <tr>
+    <td>{{ issue.severity }}</td>
+    <td>{{ issue.type }}</td>
+    <td><code>{{ issue.file }}</code></td>
+    <td>{{ issue.line }}</td>
+    <td>{{ issue.message }}</td>
+    <td>{{ issue.suggestion }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

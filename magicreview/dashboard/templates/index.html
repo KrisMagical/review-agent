@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="metrics">
+  <div><strong>{{ overview.project_count }}</strong><span>Projects</span></div>
+  <div><strong>{{ overview.review_run_count }}</strong><span>Reviews</span></div>
+  <div><strong>{{ overview.issue_count }}</strong><span>Issues</span></div>
+  <div><strong>{{ overview.high_count }}</strong><span>High</span></div>
+</section>
+<h2>Risk Summary</h2>
+<table>
+  <tr><th>Severity</th><th>Count</th></tr>
+  <tr><td>Critical</td><td>{{ overview.critical_count }}</td></tr>
+  <tr><td>High</td><td>{{ overview.high_count }}</td></tr>
+  <tr><td>Medium</td><td>{{ overview.medium_count }}</td></tr>
+  <tr><td>Low</td><td>{{ overview.low_count }}</td></tr>
+</table>
+{% endblock %}

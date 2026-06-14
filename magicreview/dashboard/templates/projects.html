@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Projects</h2>
+<table>
+  <tr><th>Name</th><th>Provider</th><th>Last Review</th><th>Issues</th><th>High</th></tr>
+  {% for project in projects %}
+  <tr>
+    <td><a href="/projects/{{ project.id }}">{{ project.name }}</a></td>
+    <td>{{ project.provider }}</td>
+    <td>{{ project.last_review_at or "" }}</td>
+    <td>{{ project.issue_count }}</td>
+    <td>{{ project.high_count }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

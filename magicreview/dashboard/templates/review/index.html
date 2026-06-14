@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Review Center</h2>
+<p>Run local-first reviews from the Dashboard. Networked LLM and GitHub operations require explicit authorization.</p>
+<div class="review-grid">
+  <a class="review-card" href="/review/diff">
+    <strong>Review Diff</strong>
+    <span>Paste a diff or upload a patch file.</span>
+  </a>
+  <a class="review-card" href="/review/project">
+    <strong>Review Project</strong>
+    <span>Review a server-local project path under allowed roots.</span>
+  </a>
+  <a class="review-card" href="/review/github-pr">
+    <strong>Review GitHub PR</strong>
+    <span>Fetch a pull request diff when network access is authorized.</span>
+  </a>
+</div>
+{% endblock %}

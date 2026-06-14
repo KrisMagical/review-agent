@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MagicReview Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>MagicReview Dashboard</h1>
+    <nav>
+      <a href="/dashboard">Overview</a>
+      <a href="/review">Review</a>
+      <a href="/projects">Projects</a>
+      <a href="/audit/network">Network Audit</a>
+      <a href="/settings/models">Model Settings</a>
+      <a href="/logout">Logout</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

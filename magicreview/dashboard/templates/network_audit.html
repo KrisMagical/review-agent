@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Network Audit</h2>
+<table>
+  <tr><th>Time</th><th>Source</th><th>Provider</th><th>Operation</th><th>Sharing</th><th>Status</th><th>Error</th></tr>
+  {% for record in records %}
+  <tr>
+    <td>{{ record.timestamp }}</td>
+    <td>{{ record.source }}</td>
+    <td>{{ record.provider }}</td>
+    <td>{{ record.operation }}</td>
+    <td>{{ record.code_sharing_mode }}</td>
+    <td>{{ record.status }}</td>
+    <td>{{ record.error_type or "" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

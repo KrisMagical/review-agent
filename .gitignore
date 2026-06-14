@@ -12,8 +12,7 @@ __pycache__/
 review-*.md
 
 *.html
-!reviewagent/dashboard/templates/**/*.html
-!reviewagent/dashboard/templates/review/*.html
+!magicreview/dashboard/templates/**/*.html
 
 .vscode/
 .env
